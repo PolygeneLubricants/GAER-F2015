@@ -28,7 +28,7 @@ public class ParserTest {
         Parser p = new Parser();
         short[][] altitudeMap = new short[0][];
         try {
-            altitudeMap = p.read("./data/raw/N32/N52E006.hgt");
+            altitudeMap = p.read("./data/raw/N32/N52E007.hgt");
         } catch (IOException e) {
             e.printStackTrace();
         }
