@@ -17,7 +17,7 @@ public class ParserTest {
     public void testReading() {
         Parser p = new Parser();
         try {
-            p.read("D:/Users/Andreas/Git/GAER-F2015/MapGenerator/data/raw/N32/N52E006.hgt");
+            p.read("./data/raw/N32/N52E006.hgt");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -28,7 +28,7 @@ public class ParserTest {
         Parser p = new Parser();
         short[][] altitudeMap = new short[0][];
         try {
-            altitudeMap = p.read("D:/Users/Andreas/Git/GAER-F2015/MapGenerator/data/raw/N32/N52E006.hgt");
+            altitudeMap = p.read("./data/raw/N32/N52E006.hgt");
         } catch (IOException e) {
             e.printStackTrace();
         }
