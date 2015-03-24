@@ -2,3 +2,10 @@
 /MapGenerator/*.iml
 /out/production/MapGenerator/Preprocessor
 /out/production/MapGenerator/TestSuite/Preprocessor
+
+/MapGenerator/.idea
+
+/MapGenerator/out/production/MapGenerator/Preprocessor/*.class
+
+/MapGenerator/out/production/MapGenerator/TestSuite/Preprocessor/*.class
+out

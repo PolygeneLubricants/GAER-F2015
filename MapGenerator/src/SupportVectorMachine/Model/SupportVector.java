@@ -15,8 +15,8 @@ public class SupportVector {
     }
 
     public SupportVector(short[][] matrix) {
-        _width = matrix.length;
-        _height = matrix[0].length;
+        _height = matrix.length;
+        _width = matrix[0].length;
         setVector(matrix);
     }
 
@@ -55,5 +55,18 @@ public class SupportVector {
                 setVector(x, y, matrix[x][y]);
             }
         }
+    }
+
+    public double[] toDouble() {
+        double[] doubles = new double[_vector.length];
+        for(int i = 0; i < _vector.length; i++) {
+            doubles[i] = new Short(_vector[i]).doubleValue();
+        }
+
+        return doubles;
+    }
+
+    public int getLength() {
+        return _vector.length;
     }
 }

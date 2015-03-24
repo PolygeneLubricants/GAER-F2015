@@ -1,6 +1,8 @@
 package TestSuite.Preprocessor;
 
 import Preprocessor.Parser;
+import SupportVectorMachine.Model.SupportVector;
+import org.junit.Assert;
 import org.junit.Test;
 
 import javax.swing.*;
@@ -24,6 +26,35 @@ public class ParserTest {
     }
 
     @Test
+    public void testParsing() {
+        Parser p = new Parser();
+        short[][] matrix = new short[][]{
+                {1, 2, 3},
+                {4, 5, 6},
+                {7, 8, 9}
+        };
+        SupportVector[] result = p.parse(matrix, 1, 1);
+        Assert.assertEquals(9, result.length);
+        Assert.assertEquals(1, result[0].getVector(0,0));
+        Assert.assertEquals(5, result[4].getVector(0,0));
+        Assert.assertEquals(9, result[8].getVector(0,0));
+
+        result = p.parse(matrix, 2, 2);
+        Assert.assertEquals(4, result.length);
+        Assert.assertEquals(1, result[0].getVector(0,0));
+        Assert.assertEquals(5, result[3].getVector(0,0));
+
+        result = p.parse(matrix, 2, 3);
+        Assert.assertEquals(2, result.length);
+
+        result = p.parse(matrix, 3, 3);
+        Assert.assertEquals(1, result.length);
+        Assert.assertEquals(1, result[0].getVector(0,0));
+        Assert.assertEquals(5, result[0].getVector(1,1));
+        Assert.assertEquals(9, result[0].getVector(2,2));
+    }
+
+    @Test
     public void testVisualIdentification() {
         Parser p = new Parser();
         short[][] altitudeMap = new short[0][];
@@ -43,16 +74,6 @@ public class ParserTest {
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         while(true);
-    }
-
-    @Test
-    public void testSerialization() {
-
-    }
-
-    @Test
-    public void testDeSerialization() {
-
     }
 
     private class PixelMap extends JPanel {
