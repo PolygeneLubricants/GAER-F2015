@@ -1,6 +1,7 @@
 package SupportVectorMachine;
 
 import SupportVectorMachine.Model.SupportVector;
+import SupportVectorMachine.Model.SvmNodeMatrix;
 import libsvm.*;
 
 import java.io.IOException;
@@ -9,10 +10,10 @@ import java.io.IOException;
  * Created by Andreas on 24/3/2015.
  */
 public class Trainer {
-    private svm_parameter param;		// set by setParameters
-    private svm_problem prob;		// set by read
-    private svm_model model;
-    private int nrFold; // Fold number for cross validation
+    private svm_parameter _param;		// set by setParameters
+    private svm_problem _prob;		// set by read
+    private svm_model _model;
+    private int _nrFold; // Fold number for cross validation
 
     public Trainer() {
         setParameters();
@@ -24,15 +25,15 @@ public class Trainer {
         int total_correct = 0;
         double total_error = 0;
         double sumV = 0, sumY = 0, sumVV = 0, sumYY = 0, sumVY = 0;
-        double[] target = new double[prob.l];
+        double[] target = new double[_prob.l];
 
-        svm.svm_cross_validation(prob, param, nrFold, target);
-        if(param.svm_type == svm_parameter.EPSILON_SVR ||
-                param.svm_type == svm_parameter.NU_SVR)
+        svm.svm_cross_validation(_prob, _param, _nrFold, target);
+        if(_param.svm_type == svm_parameter.EPSILON_SVR ||
+                _param.svm_type == svm_parameter.NU_SVR)
         {
-            for(i=0;i<prob.l;i++)
+            for(i=0;i< _prob.l;i++)
             {
-                double y = prob.y[i];
+                double y = _prob.y[i];
                 double v = target[i];
                 total_error += (v-y)*(v-y);
                 sumV += v;
@@ -41,53 +42,51 @@ public class Trainer {
                 sumYY += y*y;
                 sumVY += v*y;
             }
-            System.out.print("Cross Validation Mean squared error = "+total_error/prob.l+"\n");
+            System.out.print("Cross Validation Mean squared error = "+total_error/ _prob.l+"\n");
             System.out.print("Cross Validation Squared correlation coefficient = "+
-                            ((prob.l*sumVY-sumV*sumY)*(prob.l*sumVY-sumV*sumY))/
-                                    ((prob.l*sumVV-sumV*sumV)*(prob.l*sumYY-sumY*sumY))+"\n"
+                            ((_prob.l*sumVY-sumV*sumY)*(_prob.l*sumVY-sumV*sumY))/
+                                    ((_prob.l*sumVV-sumV*sumV)*(_prob.l*sumYY-sumY*sumY))+"\n"
             );
         }
         else
         {
-            for(i=0;i<prob.l;i++)
-                if(target[i] == prob.y[i])
+            for(i=0;i< _prob.l;i++)
+                if(target[i] == _prob.y[i])
                     ++total_correct;
-            System.out.print("Cross Validation Accuracy = "+100.0*total_correct/prob.l+"%\n");
+            System.out.print("Cross Validation Accuracy = "+100.0*total_correct/ _prob.l+"%\n");
         }
     }
 
     public void run(SupportVector[] vectors, String fileName) throws IOException
     {
-        read(vectors);
-        model = svm.svm_train(prob, param);
-        svm.svm_save_model(fileName, model);
+        read(toSvmNodeMatrix(vectors));
+        _model = svm.svm_train(_prob, _param);
+        svm.svm_save_model(fileName, _model);
     }
 
     private void setParameters()
     {
-        param = new svm_parameter();
+        _param = new svm_parameter();
         // default values
-        param.svm_type = svm_parameter.ONE_CLASS;
-        param.kernel_type = svm_parameter.RBF;
-        param.degree = 3;
-        param.gamma = 0;	// 1/num_features
-        param.coef0 = 0;
-        param.nu = 0.5;
-        param.cache_size = 100;
-        param.C = 1;
-        param.eps = 1e-3;
-        param.p = 0.1;
-        param.shrinking = 1;
-        param.probability = 0;
-        param.nr_weight = 0;
-        param.weight_label = new int[0];
-        param.weight = new double[0];
-        nrFold = 10;
+        _param.svm_type = svm_parameter.ONE_CLASS;
+        _param.kernel_type = svm_parameter.RBF;
+        _param.degree = 3;
+        _param.gamma = 0;	// 1/num_features
+        _param.coef0 = 0;
+        _param.nu = 0.5;
+        _param.cache_size = 100;
+        _param.C = 1;
+        _param.eps = 1e-3;
+        _param.p = 0.1;
+        _param.shrinking = 1;
+        _param.probability = 0;
+        _param.nr_weight = 0;
+        _param.weight_label = new int[0];
+        _param.weight = new double[0];
+        _nrFold = 10;
     }
 
-    // read in a problem (in svmlight format)
-    private void read(SupportVector[] vectors) throws IOException
-    {
+    public SvmNodeMatrix toSvmNodeMatrix(SupportVector[] vectors) {
         int length = vectors.length; // Length of training data
         double[] classification = new double[length]; // This is redundant for our one-class SVM.
         svm_node[][] trainingSet = new svm_node[length][]; // The training set.
@@ -100,7 +99,7 @@ public class Trainer {
             svm_node[] vector = new svm_node[vectors[i].getLength() + 1];
 
             double[] doubles = vectors[i].toDouble(); // The SVM runs on doubles.
-            for(int j = 0; j < vector.length; j++) {
+            for(int j = 0; j < doubles.length; j++) {
                 svm_node node = new svm_node();
                 node.index = j;
                 node.value = doubles[j];
@@ -113,9 +112,15 @@ public class Trainer {
             trainingSet[i] = vector;
         }
 
-        svm_problem problem = new svm_problem();
-        problem.l = length;
-        problem.y = classification;
-        problem.x = trainingSet;
+        return new SvmNodeMatrix(trainingSet, classification, length);
+    }
+
+    // read in a problem (in svmlight format)
+    private void read(SvmNodeMatrix nodeMatrix) throws IOException
+    {
+        _prob = new svm_problem();
+        _prob.l = nodeMatrix.get_length();
+        _prob.y = nodeMatrix.get_classification();
+        _prob.x = nodeMatrix.get_matrix();
     }
 }

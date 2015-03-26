@@ -9,6 +9,7 @@ import java.nio.ByteOrder;
 import java.nio.ShortBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * User: AndreasRydingLund
@@ -53,18 +54,28 @@ public class Parser {
             throw new IllegalArgumentException("Cannot cut a matrix into pieces larger than it's original size.");
         }
 
-        int heightCount = matrix.length - height + 1;
-        int widthCount = matrix[0].length - width + 1;
+        // We are now operating on indexes, and such starts at 0.
+        width = width - 1;
+        height = height - 1;
+
+        int heightCount = matrix.length - height;
+        int widthCount = matrix[0].length - width;
 
         SupportVector[] vector = new SupportVector[heightCount * widthCount];
         int curIndex = 0;
 
+        // Iterate over matrix
         for(int i = 0; i < heightCount; i++) {
             for(int j = 0; j < widthCount; j++) {
-                short[][] smallMatrix = new short[height][];
+                // Create our new partial matrix
+                short[][] smallMatrix = new short[height + 1][];
 
-                for(int smallMatrixHeightIndex = 0; smallMatrixHeightIndex < height; smallMatrixHeightIndex++) {
-                    smallMatrix[smallMatrixHeightIndex] = Arrays.copyOfRange(matrix[i + smallMatrixHeightIndex], j, j + width);
+                // Fill partial matrix. NOTE: I know the nested for-loops are insane, but Java's built in array-copy commands copy to the heap, which overloads the GC.
+                for(int smallMatrixHeightIndex = 0; smallMatrixHeightIndex < (height + 1); smallMatrixHeightIndex++) {
+                    smallMatrix[smallMatrixHeightIndex] = new short[width + 1];
+                    for(int smallMatrixWidthIndex = 0; smallMatrixWidthIndex < (width + 1); smallMatrixWidthIndex++) {
+                        smallMatrix[smallMatrixHeightIndex][smallMatrixWidthIndex] = matrix[i + smallMatrixHeightIndex][j + smallMatrixWidthIndex];
+                    }
                 }
 
                 vector[curIndex++] = new SupportVector(smallMatrix);

@@ -35,18 +35,20 @@ public class SupportVector {
         return _height;
     }
 
-    public short getVector(int x, int y) {
-        int row = x * _width;
-        return _vector[row + y];
+    public short getVector(int row, int col) {
+        int computedRow = row * _width;
+        return _vector[computedRow + col];
     }
 
-    public void setVector(int x, int y, short value) {
-        int row = x * _width;
-        _vector[row + y] = value;
+    public void setVector(int row, int col, short value) {
+        int computedRow = row * _width;
+        _vector[computedRow + col] = value;
     }
 
     public void setVector(short[][] matrix) {
         _vector = new short[matrix.length * matrix[0].length];
+        _height = matrix.length;
+        _width = matrix[0].length;
         for(int x = 0; x < matrix.length; x++) {
             for(int y = 0; y < matrix[x].length; y++) {
                 if(matrix[x].length != _width)

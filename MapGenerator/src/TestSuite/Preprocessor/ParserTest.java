@@ -2,6 +2,7 @@ package TestSuite.Preprocessor;
 
 import Preprocessor.Parser;
 import SupportVectorMachine.Model.SupportVector;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -42,7 +43,7 @@ public class ParserTest {
         result = p.parse(matrix, 2, 2);
         Assert.assertEquals(4, result.length);
         Assert.assertEquals(1, result[0].getVector(0,0));
-        Assert.assertEquals(5, result[3].getVector(0,0));
+        Assert.assertEquals(8, result[3].getVector(1,0));
 
         result = p.parse(matrix, 2, 3);
         Assert.assertEquals(2, result.length);
@@ -54,6 +55,7 @@ public class ParserTest {
         Assert.assertEquals(9, result[0].getVector(2,2));
     }
 
+    @org.junit.Ignore
     @Test
     public void testVisualIdentification() {
         Parser p = new Parser();
@@ -73,7 +75,6 @@ public class ParserTest {
         frame.setVisible(true);
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        while(true);
     }
 
     private class PixelMap extends JPanel {
