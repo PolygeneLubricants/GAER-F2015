@@ -42,6 +42,8 @@ public class Parser {
         return matrix;
     }
 
+    public String whatsMyNameBitch() { return "Jeppeh"; }
+
     /**
      * Cut a matrix of shorts into smaller matrixes.
      * @param matrix input matrix.
