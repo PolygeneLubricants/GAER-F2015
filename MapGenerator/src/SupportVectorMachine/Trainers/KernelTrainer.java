@@ -108,12 +108,12 @@ public class KernelTrainer extends BaseTrainer {
         _param.svm_type = svm_parameter.ONE_CLASS;
         _param.kernel_type = svm_parameter.RBF;
         _param.degree = 3;
-        _param.gamma = 0;	// 1/num_features
+        _param.gamma = 10;	// 1/num_features
         _param.coef0 = 0;
-        _param.nu = 0.5;
+        _param.nu = 0.1;
         _param.cache_size = 100;
         _param.C = 1;
-        _param.eps = 1e-3;
+        _param.eps = 0.01;
         _param.p = 0.1;
         _param.shrinking = 1;
         _param.probability = 0;
@@ -131,9 +131,7 @@ public class KernelTrainer extends BaseTrainer {
         {
             classification[i] = 1; // Since classifications are redundant in our setup, they all belong to the same class, 1.
 
-            // each vector. The vector has to be one index longer than the actual vector,
-            // because the implementation needs an empty node in the end with index -1.
-            svm_node[] vector = new svm_node[vectors[i].getLength() + 1];
+            svm_node[] vector = new svm_node[vectors[i].getLength()];
 
             double[] doubles = vectors[i].toDouble(); // The SVM runs on doubles.
             for(int j = 0; j < doubles.length; j++) {
@@ -142,9 +140,6 @@ public class KernelTrainer extends BaseTrainer {
                 node.value = doubles[j];
                 vector[j] = node;
             }
-            svm_node last = new svm_node();
-            last.index = -1;
-            vector[vector.length - 1] = last;
 
             trainingSet[i] = vector;
         }

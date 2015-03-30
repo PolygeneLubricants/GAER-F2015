@@ -60,7 +60,7 @@ public class ParserTest {
         Parser p = new Parser();
         short[][] altitudeMap = new short[0][];
         try {
-            altitudeMap = p.read("./data/raw/N32/N52E007.hgt");
+            altitudeMap = p.read("D:/Users/Andreas/Git/GAER-F2015/MapGenerator/data/raw/N32/N52E007.hgt");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -74,6 +74,8 @@ public class ParserTest {
         frame.setVisible(true);
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        while(true);
     }
 
     private class PixelMap extends JPanel {
@@ -96,15 +98,24 @@ public class ParserTest {
 
 
         public void fillCanvas(short[][] altitudeMap) {
-            for (int x = 0; x < canvas.getWidth(); x++) {
-                for (int y = 0; y < canvas.getHeight(); y++) {
-                    int green = altitudeMap[x][y] > 0 ? (altitudeMap[x][y] * 255 / Short.MAX_VALUE) : 0;
-                    int blue = altitudeMap[x][y] < 0 ? ((altitudeMap[x][y] * -1 * 255) / Short.MAX_VALUE) : 0;
+            for(int row = 0; row < canvas.getHeight(); row++) {
+                for(int col = 0; col < canvas.getWidth(); col++) {
+                    int green = altitudeMap[row][col] > 0 ? (altitudeMap[row][col] * 255 / Short.MAX_VALUE) : 0;
+                    int blue = altitudeMap[row][col] < 0 ? (((altitudeMap[row][col] * -1) * 255) / Short.MAX_VALUE) : 0;
+
+                    if(green < 0 || green > 256) {
+                        throw new RuntimeException("Green must be between 0 and 255. Green: " + green);
+                    }
+
+                    if(blue < 0 || blue > 256) {
+                        throw new RuntimeException("Blue must be between 0 and 255. Green: " + blue);
+                    }
 
                     Color c = new Color(0, green, blue);
-                    canvas.setRGB(x, y, c.getRGB());
+                    canvas.setRGB(col, row, c.getRGB());
                 }
             }
+
             repaint();
         }
     }

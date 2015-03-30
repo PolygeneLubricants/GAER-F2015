@@ -30,7 +30,7 @@ public class LinearTrainerTest {
         Assert.assertEquals(9, nodeMatrix.get_length());
         Assert.assertEquals(9, nodeMatrix.get_classification().length);
         Assert.assertEquals(9, nodeMatrix.get_matrix().length);
-        Assert.assertEquals(0, nodeMatrix.get_matrix()[0][0].getIndex());
+        Assert.assertEquals(1, nodeMatrix.get_matrix()[0][0].getIndex());
         Assert.assertEquals(1.0, nodeMatrix.get_matrix()[0][0].getValue(), 0.0);
 
         result = p.parse(matrix, 3, 3);
@@ -39,7 +39,7 @@ public class LinearTrainerTest {
         Assert.assertEquals(1, nodeMatrix.get_classification().length);
         Assert.assertEquals(1, nodeMatrix.get_matrix().length);
         Assert.assertEquals(9, nodeMatrix.get_matrix()[0].length);
-        Assert.assertEquals(7, nodeMatrix.get_matrix()[0][7].getIndex());
+        Assert.assertEquals(8, nodeMatrix.get_matrix()[0][7].getIndex());
         Assert.assertEquals(8, nodeMatrix.get_matrix()[0][7].getValue(), 0);
     }
 
@@ -79,9 +79,9 @@ public class LinearTrainerTest {
                 {10, 11, 12, 13, 42, 15, 16, 17, 18, 19},
                 {11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
                 {12, 13, 14, 15, 16, 17, 18, 19, 20, 21},
-                {13, 14, 15, 16, 17, 18, 19, 20, 21, 22},
-                {14, 15, 16, 17, 18, 19, 42, 21, 22, 23},
-                {15, 16, 17, 18, 19, 20, 21, 22, 23, 24}
+                {13, 14, 15, 16, 17, 18, 19, 120, 121, 122},
+                {14, 15, 16, 17, 18, 19, 42, 121, 122, 123},
+                {15, 16, 17, 18, 19, 20, 21, 122, 123, 124}
         };
 
         LinearNodeMatrix cvMatrix = t.toSvmNodeMatrix(p.parse(predict, 3, 3));
@@ -95,7 +95,7 @@ public class LinearTrainerTest {
             if(predictions[i] == problem.y[i])
                 totalCorrect++;
 
-        System.out.print("Prediction Accuracy = " + 100.0 * totalCorrect/ problem.l + "%\n");
+        System.out.print("Prediction Accuracy = " + 100.0 * totalCorrect/ predictions.length + "%\n");
     }
 
     @Test
@@ -147,7 +147,7 @@ public class LinearTrainerTest {
         Parser p = new Parser();
         short[][] altitudeMap = new short[0][];
         try {
-            altitudeMap = p.read("./data/raw/N32/N52E007.hgt");
+            altitudeMap = p.read("D:/Users/Andreas/Git/GAER-F2015/MapGenerator/data/raw/N32/N52E007.hgt");
         } catch (IOException e) {
             e.printStackTrace();
         }
