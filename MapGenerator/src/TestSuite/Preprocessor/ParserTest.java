@@ -2,7 +2,6 @@ package TestSuite.Preprocessor;
 
 import Preprocessor.Parser;
 import SupportVectorMachine.Model.SupportVector;
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -1,31 +1,57 @@
-package SupportVectorMachine;
+package SupportVectorMachine.Trainers;
 
 import SupportVectorMachine.Model.SupportVector;
 import SupportVectorMachine.Model.SvmNodeMatrix;
 import libsvm.*;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 
 /**
- * Created by Andreas on 24/3/2015.
+ * Created by Andreas on 29/3/2015.
  */
-public class Trainer {
+public class KernelTrainer extends BaseTrainer {
     private svm_parameter _param;		// set by setParameters
     private svm_problem _prob;		// set by read
     private svm_model _model;
     private int _nrFold; // Fold number for cross validation
 
-    public Trainer() {
+    public KernelTrainer() {
         setParameters();
+    }
+
+    public KernelTrainer(String modelFilePath) {
+        setParameters();
+        loadModel(modelFilePath);
+    }
+
+    public void loadModel(String modelFilePath) {
+        throw new NotImplementedException();
+    }
+
+    public double[] predict(SvmNodeMatrix matrix) {
+        double[] predictions = new double[matrix.get_length()];
+        int index = 0;
+        for(svm_node[] feature : matrix.get_matrix()) {
+            predictions[index] = predict(feature);
+            index++;
+        }
+
+        return predictions;
+    }
+
+    public double predict(svm_node[] vector) {
+        return svm.svm_predict(_model, vector);
     }
 
     public void crossValidate()
     {
         int i;
         int total_correct = 0;
+
+        double[] target = new double[_prob.l];
         double total_error = 0;
         double sumV = 0, sumY = 0, sumVV = 0, sumYY = 0, sumVY = 0;
-        double[] target = new double[_prob.l];
 
         svm.svm_cross_validation(_prob, _param, _nrFold, target);
         if(_param.svm_type == svm_parameter.EPSILON_SVR ||
@@ -62,6 +88,17 @@ public class Trainer {
         read(toSvmNodeMatrix(vectors));
         _model = svm.svm_train(_prob, _param);
         svm.svm_save_model(fileName, _model);
+    }
+
+    public void run(SupportVector[] vectors)
+    {
+        read(toSvmNodeMatrix(vectors));
+        _model = svm.svm_train(_prob, _param);
+    }
+
+    public void run(SvmNodeMatrix matrix) {
+        read(matrix);
+        _model = svm.svm_train(_prob, _param);
     }
 
     private void setParameters()
@@ -116,7 +153,7 @@ public class Trainer {
     }
 
     // read in a problem (in svmlight format)
-    private void read(SvmNodeMatrix nodeMatrix) throws IOException
+    private void read(SvmNodeMatrix nodeMatrix)
     {
         _prob = new svm_problem();
         _prob.l = nodeMatrix.get_length();
