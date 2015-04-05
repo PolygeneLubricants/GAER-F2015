@@ -86,6 +86,18 @@ public class KernelTrainerTest {
                 {14, 15, 16, 17, 18, 19, 20, 21, 22, 23},
                 {15, 16, 17, 18, 19, 20, 21, 22, 23, 24}
         };
+
+        SupportVector[] predictVectors = p.parse(testSet, 3, 3);
+
+        double[] predictions = t.predict(t.toSvmNodeMatrix(predictVectors));
+        int correct = 0;
+        for(double d : predictions) {
+            if(d == 1) {
+                correct++;
+            }
+        }
+
+        System.out.println("Predictions: " + correct + " out of " + predictions.length);
     }
 
     @Test
