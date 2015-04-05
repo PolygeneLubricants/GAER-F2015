@@ -9,3 +9,5 @@
 
 /MapGenerator/out/production/MapGenerator/TestSuite/Preprocessor/*.class
 out
+
+/MapGenerator/testLinearRunSmall.model
