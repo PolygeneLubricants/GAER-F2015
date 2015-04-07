@@ -9,7 +9,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 
 /**
@@ -33,7 +32,7 @@ public class MainView {
         mapPanel = new Panel();
         mapPanel.setLayout(new BorderLayout());
         controlPanel = new Panel();
-        controlPanel.setLayout(new BorderLayout());
+        controlPanel.setLayout(new FlowLayout());
 
         setupRandomGroup();
         setupRealGroup();
@@ -74,6 +73,7 @@ public class MainView {
 
     private void setupControls() {
         Label title = new Label("Controls");
+        // PREDICT
         Button predictButton = new Button("Predict");
         predictButton.addActionListener(new ActionListener() {
             @Override
@@ -81,8 +81,30 @@ public class MainView {
                 classify();
             }
         });
-        controlPanel.add(title, BorderLayout.NORTH);
-        controlPanel.add(predictButton, BorderLayout.CENTER);
+
+        // STEP
+        Button stepButton = new Button("Step");
+        stepButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // STEP
+            }
+        });
+
+
+        // RUN
+        Button runButton = new Button("Run");
+        runButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // RUN
+            }
+        });
+
+        controlPanel.add(title);
+        controlPanel.add(predictButton);
+        controlPanel.add(stepButton);
+        controlPanel.add(runButton);
     }
 
     private void setupPredictions() {
