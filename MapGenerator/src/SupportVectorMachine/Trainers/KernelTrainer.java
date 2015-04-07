@@ -1,5 +1,6 @@
 package SupportVectorMachine.Trainers;
 
+import Preprocessor.Parser;
 import SupportVectorMachine.Model.SupportVector;
 import SupportVectorMachine.Model.SvmNodeMatrix;
 import libsvm.*;
@@ -160,5 +161,36 @@ public class KernelTrainer extends BaseTrainer {
         _prob.l = nodeMatrix.get_length();
         _prob.y = nodeMatrix.get_classification();
         _prob.x = nodeMatrix.get_matrix();
+    }
+
+    public static void main(String[] args) {
+        String inputDataPath = "./data/raw/N32/N52E007.hgt";
+        String outputModelName = "N52E007.model";
+        int width = 100;
+        int height = 100;
+
+        if(args.length != 0) {
+            inputDataPath = args[0];
+            outputModelName = args[1];
+            width = Integer.parseInt(args[2]);
+            height = Integer.parseInt(args[3]);
+        }
+
+        Parser p = new Parser();
+        short[][] altitudeMap = new short[0][];
+        try {
+            altitudeMap = p.read(inputDataPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        altitudeMap = p.cut(altitudeMap, 0, 0, width, height);
+        SupportVector[] vectors = p.parse(altitudeMap, 3, 3);
+        KernelTrainer t = new KernelTrainer();
+        try {
+            t.run(vectors, outputModelName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

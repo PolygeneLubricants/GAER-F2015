@@ -60,7 +60,7 @@ public class KernelTrainerTest {
             e.printStackTrace();
         }
 
-        altitudeMap = p.cut(altitudeMap, 0, 0, 50, 50);
+        altitudeMap = p.cut(altitudeMap, 0, 0, 100, 100);
         SupportVector[] vectors = p.parse(altitudeMap, 3, 3);
         KernelTrainer t = new KernelTrainer();
         try {
