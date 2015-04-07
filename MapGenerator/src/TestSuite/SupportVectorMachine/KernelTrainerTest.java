@@ -5,7 +5,9 @@ import SupportVectorMachine.Model.SupportVector;
 import SupportVectorMachine.Model.SvmNodeMatrix;
 import SupportVectorMachine.Trainers.KernelTrainer;
 import libsvm.svm_node;
+import libsvm.svm_problem;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -49,6 +51,48 @@ public class KernelTrainerTest {
     }
 
     @Test
+    public void testDataFragment() {
+        Parser p = new Parser();
+        short[][] altitudeMap = new short[0][];
+        try {
+            altitudeMap = p.read("./data/raw/N32/N52E007.hgt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        altitudeMap = p.cut(altitudeMap, 50, 50);
+        SupportVector[] vectors = p.parse(altitudeMap, 3, 3);
+        KernelTrainer t = new KernelTrainer();
+        try {
+            t.run(vectors, "testKernelRunFragment.model");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        short[][] testMap = new short[0][];
+        try {
+            testMap = p.read("./data/raw/N32/N52E007.hgt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        testMap = p.cut(testMap, 50, 50);
+        vectors = p.parse(testMap, 3, 3);
+        double[] predictions = t.predict(t.toSvmNodeMatrix(vectors));
+
+        svm_problem problem = t.getProblem();
+        int totalCorrect = 0;
+        for(int i = 0; i< predictions.length; i++)
+            if(predictions[i] == problem.y[i])
+                totalCorrect++;
+
+        System.out.print("Prediction Accuracy = " + 100.0 * totalCorrect / predictions.length + "%\n");
+
+
+    }
+
+    @Test
+    @Ignore
     public void testRunSmall() {
         short[][] matrix = new short[][]{
                 { 1,  2,  3,  4,  5,  6,  7,  8,  9, 10},
@@ -101,6 +145,7 @@ public class KernelTrainerTest {
     }
 
     @Test
+    @Ignore
     public void testRunBig() {
         Parser p = new Parser();
         short[][] altitudeMap = new short[0][];
@@ -120,6 +165,7 @@ public class KernelTrainerTest {
     }
 
     @Test
+    @Ignore
     public void testCrossValidate() {
         short[][] matrix = new short[][]{
                 { 1,  2,  3,  4,  5,  6,  7,  8,  9, 10},
@@ -144,6 +190,7 @@ public class KernelTrainerTest {
     }
 
     @Test
+    @Ignore
     public void testQuadraticPrediction() {
         Parser p = new Parser();
         // 1 = quadratic, -1 = non-quadratic

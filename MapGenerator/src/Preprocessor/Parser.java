@@ -44,6 +44,18 @@ public class Parser {
 
     public String whatsMyNameBitch() { return "Jeppeh"; }
 
+    public short[][] cut(short[][] matrix, int width, int height) {
+        short[][] cutMatrix = new short[height][];
+        for(int i = 0; i < height; i++) {
+            cutMatrix[i] = new short[width];
+            for(int j = 0; j < width; j++) {
+                cutMatrix[i][j] = matrix[i][j];
+            }
+        }
+
+        return cutMatrix;
+    }
+
     /**
      * Cut a matrix of shorts into smaller matrixes.
      * @param matrix input matrix.

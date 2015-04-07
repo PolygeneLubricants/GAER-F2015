@@ -12,6 +12,11 @@ import java.io.IOException;
  */
 public class KernelTrainer extends BaseTrainer {
     private svm_parameter _param;		// set by setParameters
+
+    public svm_problem getProblem() {
+        return _prob;
+    }
+
     private svm_problem _prob;		// set by read
     private svm_model _model;
     private int _nrFold; // Fold number for cross validation
@@ -110,17 +115,17 @@ public class KernelTrainer extends BaseTrainer {
         _param.degree = 3;
         _param.gamma = 10;	// 1/num_features
         _param.coef0 = 0;
-        _param.nu = 0.1;
-        _param.cache_size = 100;
+        _param.nu = 0.08;
+        _param.cache_size = 10;
         _param.C = 1;
-        _param.eps = 0.01;
+        _param.eps = 0.001;
         _param.p = 0.1;
         _param.shrinking = 1;
         _param.probability = 0;
         _param.nr_weight = 0;
         _param.weight_label = new int[0];
         _param.weight = new double[0];
-        _nrFold = 10;
+        _nrFold = 2;
     }
 
     public SvmNodeMatrix toSvmNodeMatrix(SupportVector[] vectors) {

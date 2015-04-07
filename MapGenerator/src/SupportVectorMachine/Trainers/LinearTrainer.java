@@ -81,7 +81,7 @@ public class LinearTrainer extends BaseTrainer {
 
     private void setParameters()
     {
-        _param = new Parameter(SolverType.L2R_LR, 1, 0.01);
+        _param = new Parameter(SolverType.L2R_LR, 1, 0.001);
         _nrFold = 10;
     }
 
