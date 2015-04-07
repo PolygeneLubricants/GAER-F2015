@@ -2,6 +2,7 @@ package TestSuite.Preprocessor;
 
 import Preprocessor.Parser;
 import SupportVectorMachine.Model.SupportVector;
+import TestSuite.RandomMapGenerator.RandomMap;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -9,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Random;
 
 /**
  * User: AndreasRydingLund
@@ -58,12 +60,13 @@ public class ParserTest {
     @Test
     public void testVisualIdentification() {
         Parser p = new Parser();
-        short[][] altitudeMap = new short[0][];
-        try {
-            altitudeMap = p.read("./data/raw/N32/N52E007.hgt");
+        short[][] altitudeMap = RandomMap.CreateRandomMap();
+
+/*        try {
+            //altitudeMap = p.read("./data/raw/N32/N52E007.hgt");
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
 
         JFrame frame = new JFrame("Visual verification of SRTM maps");
 
@@ -98,10 +101,11 @@ public class ParserTest {
 
 
         public void fillCanvas(short[][] altitudeMap) {
+            short maxHeight = RandomMap.FindMaxHeight(altitudeMap);
             for(int row = 0; row < canvas.getHeight(); row++) {
                 for(int col = 0; col < canvas.getWidth(); col++) {
-                    int green = altitudeMap[row][col] > 0 ? (altitudeMap[row][col] * 255 / Short.MAX_VALUE) : 0;
-                    int blue = altitudeMap[row][col] < 0 ? (((altitudeMap[row][col] * -1) * 255) / Short.MAX_VALUE) : 0;
+                    int green = altitudeMap[row][col] > 0 ? (altitudeMap[row][col] * 255 / maxHeight) : 0;
+                    int blue = altitudeMap[row][col] < 0 ? (((altitudeMap[row][col] * -1) * 255) / maxHeight) : 0;
 
                     if(green < 0 || green > 256) {
                         throw new RuntimeException("Green must be between 0 and 255. Green: " + green);
