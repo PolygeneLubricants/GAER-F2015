@@ -1,16 +1,13 @@
-package TestSuite.RandomMapGenerator;
-
-import Preprocessor.Parser;
+package RandomMapGenerator;
 
 /**
  * Created by patrikk on 30/03/2015.
  */
 public class RandomMap {
-    Parser p = new Parser();
     short[][] matrix;
 
-    public static short[][] CreateRandomMap(){
-        short[][] randomMap = new short[3000][3000];
+    public static short[][] CreateRandomMap(int width, int height){
+        short[][] randomMap = new short[height][width];
         short initialMaxHeight = Short.MAX_VALUE;
 
         for(int i = 0; i<randomMap.length; i++){

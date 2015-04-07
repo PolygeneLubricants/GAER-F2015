@@ -1,6 +1,7 @@
 package TestSuite.SupportVectorMachine;
 
 import Preprocessor.Parser;
+import RandomMapGenerator.RandomMap;
 import SupportVectorMachine.Model.SupportVector;
 import SupportVectorMachine.Model.SvmNodeMatrix;
 import SupportVectorMachine.Trainers.KernelTrainer;
@@ -244,5 +245,29 @@ public class KernelTrainerTest {
         Assert.assertEquals(-1, p1, 0.001);
         Assert.assertEquals(1, p2, 0.001);
 
+    }
+
+    @Test
+    public void testPredictionOnRandomMap() {
+        KernelTrainer t = new KernelTrainer();
+        Parser p = new Parser();
+        try {
+            t.loadModel("N52E007.model");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        short[][] randomMap = RandomMap.CreateRandomMap(100, 100);
+        SupportVector[] randomVectors = p.parse(randomMap, 3, 3);
+        double[] predictions = t.predict(t.toSvmNodeMatrix(randomVectors));
+        int correct = 0;
+        for(int i = 0; i < predictions.length; i++) {
+            if(predictions[i] == 1) {
+                correct++;
+            }
+        }
+
+        // Should be 0, but might be a few by coincidence.
+        System.out.println(correct + " correct out of " + predictions.length);
     }
 }
