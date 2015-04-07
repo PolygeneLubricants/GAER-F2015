@@ -25,13 +25,14 @@ public class KernelTrainer extends BaseTrainer {
         setParameters();
     }
 
-    public KernelTrainer(String modelFilePath) {
+    public KernelTrainer(String modelFilePath) throws IOException {
         setParameters();
         loadModel(modelFilePath);
     }
 
-    public void loadModel(String modelFilePath) {
-        throw new NotImplementedException();
+    public void loadModel(String modelFilePath) throws IOException {
+        svm_model model = svm.svm_load_model(modelFilePath);
+        _model = model;
     }
 
     public double[] predict(SvmNodeMatrix matrix) {
@@ -113,19 +114,19 @@ public class KernelTrainer extends BaseTrainer {
         _param.svm_type = svm_parameter.ONE_CLASS;
         _param.kernel_type = svm_parameter.RBF;
         _param.degree = 3;
-        _param.gamma = 10;	// 1/num_features
+        _param.gamma = 0.000000001;	// 1/num_features
         _param.coef0 = 0;
         _param.nu = 0.08;
         _param.cache_size = 10;
         _param.C = 1;
-        _param.eps = 0.001;
+        _param.eps = 0.0001;
         _param.p = 0.1;
         _param.shrinking = 1;
         _param.probability = 0;
         _param.nr_weight = 0;
         _param.weight_label = new int[0];
         _param.weight = new double[0];
-        _nrFold = 2;
+        _nrFold = 1;
     }
 
     public SvmNodeMatrix toSvmNodeMatrix(SupportVector[] vectors) {

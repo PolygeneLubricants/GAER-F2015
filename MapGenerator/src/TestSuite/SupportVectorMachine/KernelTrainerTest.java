@@ -60,7 +60,7 @@ public class KernelTrainerTest {
             e.printStackTrace();
         }
 
-        altitudeMap = p.cut(altitudeMap, 50, 50);
+        altitudeMap = p.cut(altitudeMap, 0, 0, 50, 50);
         SupportVector[] vectors = p.parse(altitudeMap, 3, 3);
         KernelTrainer t = new KernelTrainer();
         try {
@@ -76,7 +76,7 @@ public class KernelTrainerTest {
             e.printStackTrace();
         }
 
-        testMap = p.cut(testMap, 50, 50);
+        testMap = p.cut(testMap, 50, 50, 50, 50);
         vectors = p.parse(testMap, 3, 3);
         double[] predictions = t.predict(t.toSvmNodeMatrix(vectors));
 
@@ -88,7 +88,7 @@ public class KernelTrainerTest {
 
         System.out.print("Prediction Accuracy = " + 100.0 * totalCorrect / predictions.length + "%\n");
 
-
+        //t.crossValidate();
     }
 
     @Test
@@ -123,9 +123,9 @@ public class KernelTrainerTest {
                 { 7,  8,  9, 10, 11, 12, 13, 14, 15, 16},
                 { 8,  9, 10, 11, 12, 13, 14, 15, 16, 17},
                 { 9, 10, 11, 12, 13, 14, 15, 16, 17, 18},
-                {10, 11, 12, 13, 14, 15, 16, 17, 18, 19},
-                {11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
-                {12, 13, 14, 15, 16, 17, 18, 19, 20, 21},
+                {10, 11, 12, 13, 14, 115, 16, 17, 18, 19},
+                {11, 12, 13, 14, 15, 116, 17, 18, 19, 20},
+                {12, 13, 14, 15, 16, 117, 18, 19, 20, 21},
                 {13, 14, 15, 16, 17, 18, 19, 20, 21, 22},
                 {14, 15, 16, 17, 18, 19, 20, 21, 22, 23},
                 {15, 16, 17, 18, 19, 20, 21, 22, 23, 24}

@@ -11,3 +11,5 @@
 out
 
 /MapGenerator/testLinearRunSmall.model
+/MapGenerator/testKernelRunFragment.model
+/MapGenerator/testKernelRunSmall.model
