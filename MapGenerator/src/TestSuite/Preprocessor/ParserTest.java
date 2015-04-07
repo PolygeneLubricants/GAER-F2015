@@ -60,7 +60,13 @@ public class ParserTest {
     @Test
     public void testVisualIdentification() {
         Parser p = new Parser();
+
         short[][] altitudeMap = RandomMap.CreateRandomMap(100, 100);
+
+        //short[][] altitudeMap = RandomMap.blurMap(RandomMap.CreateRandomMap());
+        for(int i = 0; i < 2; i++)
+            altitudeMap = RandomMap.blurMap(altitudeMap);
+
 
 /*        try {
             //altitudeMap = p.read("./data/raw/N32/N52E007.hgt");
@@ -79,5 +85,52 @@ public class ParserTest {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         while(true);
+    }
+
+
+    private class PixelMap extends JPanel {
+        private BufferedImage canvas;
+
+        public PixelMap(short[][] altitudeMap) {
+            canvas = new BufferedImage(altitudeMap[0].length, altitudeMap.length, BufferedImage.TYPE_INT_RGB);
+            fillCanvas(altitudeMap);
+        }
+
+        public Dimension getPreferredSize() {
+            return new Dimension(canvas.getWidth(), canvas.getHeight());
+        }
+
+        public void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2 = (Graphics2D) g;
+            g2.drawImage(canvas, null, null);
+        }
+
+
+        public void fillCanvas(short[][] altitudeMap) {
+            int maxHeight = RandomMap.FindMaxHeight(altitudeMap);
+            int maxLow = RandomMap.FindMaxLow(altitudeMap);
+
+            System.out.println("FINAL MAX HEIGHT: " + maxHeight);
+            for(int row = 0; row < canvas.getHeight(); row++) {
+                for(int col = 0; col < canvas.getWidth(); col++) {
+                    int green = altitudeMap[row][col] > 0 ? (altitudeMap[row][col] * 255 / maxHeight) : 0;
+                    int blue = altitudeMap[row][col] < 0 ? (((altitudeMap[row][col] * -1) * 255) / maxLow) : 0;
+
+                    if(green < 0 || green > 256) {
+                        throw new RuntimeException("Green must be between 0 and 255. Green: " + green);
+                    }
+
+                    if(blue < 0 || blue > 256) {
+                        throw new RuntimeException("Blue must be between 0 and 255. Blue: " + blue);
+                    }
+
+                    Color c = new Color(0, green, blue);
+                    canvas.setRGB(col, row, c.getRGB());
+                }
+            }
+
+            repaint();
+        }
     }
 }
