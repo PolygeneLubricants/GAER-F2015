@@ -29,6 +29,7 @@ public class MainView {
 
     public MainView() {
         _trainer = new KernelTrainer();
+        loadModel();
         _frame = new JFrame("MapGenerator");
         _frame.setLayout(new BorderLayout());
         mapPanel = new Panel();
@@ -58,7 +59,7 @@ public class MainView {
     }
 
     public void classify() {
-        loadModel();
+        _predicted.setText("");
 
         if(_remainingPairs == null) {
             _remainingPairs = RandomMap.toIndexPairs(_randomMap.getMap());

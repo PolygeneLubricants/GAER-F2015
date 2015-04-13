@@ -32,6 +32,7 @@ public class PixelMap extends JPanel {
 
 
     public void fillCanvas(short[][] altitudeMap) {
+        map = altitudeMap;
         int maxHeight = RandomMap.FindMaxHeight(altitudeMap);
         int maxLow = RandomMap.FindMaxLow(altitudeMap);
 
