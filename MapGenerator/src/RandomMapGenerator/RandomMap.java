@@ -4,7 +4,6 @@ package RandomMapGenerator;
  * Created by patrikk on 30/03/2015.
  */
 public class RandomMap {
-    short[][] matrix;
     static float landToWaterRatio = 0.5f;
 
     public static short[][] CreateRandomMap(int width, int height){
@@ -16,7 +15,6 @@ public class RandomMap {
                 randomMap[i][j] = (short) ( (Math.random() - landToWaterRatio ) * initialMaxHeight );
             }
         }
-
 
         return randomMap;
     }
@@ -47,15 +45,6 @@ public class RandomMap {
 
         return maxLow;
     }
-
-    public void setMatrix(short[][] matrix) {
-        this.matrix = matrix;
-    }
-
-    public short[][] getMatrix() {
-        return matrix;
-    }
-
 
     public static short[][] blurMap(short[][] altitudeMap){
         short[][] blurredMap = new short[altitudeMap.length][altitudeMap[0].length];

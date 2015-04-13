@@ -3,10 +3,12 @@ package SupportVectorMachine.Trainers;
 import Preprocessor.Parser;
 import SupportVectorMachine.Model.SupportVector;
 import SupportVectorMachine.Model.SvmNodeMatrix;
+import javafx.util.Pair;
 import libsvm.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by Andreas on 29/3/2015.
@@ -45,6 +47,24 @@ public class KernelTrainer extends BaseTrainer {
         }
 
         return predictions;
+    }
+
+    /**
+     * Predicts a list of support vectors, to determine whether they fit in the model or not.
+     * @param matrix map to be parsed.
+     * @return a list of pairs containing the indices of the matrix which still does *not* fit.
+     */
+    public Pair<Integer, Integer>[] predict(short[][] matrix, Pair<Integer, Integer>[] unsolved, int width, int height) {
+        ArrayList<Pair<Integer, Integer>> remainingUnsolved = new ArrayList<>();
+
+
+
+        for(SupportVector vector : vectors) {
+            svm_node[] nodeVector = PARSE VECTOR TO SVM_NODE
+            if(predict(vector) != 1.0) {
+                remainingUnsolved.add();
+            }
+        }
     }
 
     public double predict(svm_node[] vector) {
@@ -138,20 +158,24 @@ public class KernelTrainer extends BaseTrainer {
         {
             classification[i] = 1; // Since classifications are redundant in our setup, they all belong to the same class, 1.
 
-            svm_node[] vector = new svm_node[vectors[i].getLength()];
-
-            double[] doubles = vectors[i].toDouble(); // The SVM runs on doubles.
-            for(int j = 0; j < doubles.length; j++) {
-                svm_node node = new svm_node();
-                node.index = j;
-                node.value = doubles[j];
-                vector[j] = node;
-            }
-
-            trainingSet[i] = vector;
+            trainingSet[i] = toSvmNodeArray(vectors[i]);
         }
 
         return new SvmNodeMatrix(trainingSet, classification, length);
+    }
+
+    public svm_node[] toSvmNodeArray(SupportVector supportVector) {
+        svm_node[] vector = new svm_node[supportVector.getLength()];
+
+        double[] doubles = supportVector.toDouble(); // The SVM runs on doubles.
+        for(int j = 0; j < doubles.length; j++) {
+            svm_node node = new svm_node();
+            node.index = j;
+            node.value = doubles[j];
+            vector[j] = node;
+        }
+
+        return vector;
     }
 
     // read in a problem (in svmlight format)

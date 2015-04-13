@@ -88,6 +88,8 @@ public class MainView {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // STEP
+                short[][] blurredRandomMap = RandomMap.blurMap(_randomMap.getMap());
+                setRandomMap(blurredRandomMap); // TODO: Change to actual step
             }
         });
 
@@ -118,7 +120,7 @@ public class MainView {
     }
 
     private void setupRandomGroup() {
-        setRandomMap(100, 100);
+        generateRandomMap(100, 100);
         Panel randomGroup = new Panel();
         randomGroup.setLayout(new BorderLayout());
         Label name = new Label("Random map");
@@ -139,8 +141,11 @@ public class MainView {
         mapPanel.add(realGroup, BorderLayout.EAST);
     }
 
-    public void setRandomMap(int width, int height) {
-        short[][] randomMap = RandomMap.CreateRandomMap(width, height);
+    public void generateRandomMap(int width, int height) {
+        setRandomMap(RandomMap.CreateRandomMap(width, height));
+    }
+
+    public void setRandomMap(short[][] randomMap) {
         if(_randomMap == null) {
             _randomMap = createMap(randomMap);
         }
