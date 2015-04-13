@@ -4,6 +4,7 @@ import Preprocessor.Parser;
 import RandomMapGenerator.RandomMap;
 import SupportVectorMachine.Model.SupportVector;
 import SupportVectorMachine.Trainers.KernelTrainer;
+import javafx.util.Pair;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,6 +22,7 @@ public class MainView {
     PixelMap _realMap;
     KernelTrainer _trainer;
     Label _predicted;
+    Pair<Integer, Integer>[] _remainingPairs;
 
     Panel mapPanel;
     Panel controlPanel;
@@ -57,18 +59,14 @@ public class MainView {
 
     public void classify() {
         loadModel();
-        Parser p = new Parser();
 
-        SupportVector[] randomVectors = p.parse(_randomMap.getMap(), 3, 3);
-        double[] predictions = _trainer.predict(_trainer.toSvmNodeMatrix(randomVectors));
-        int correct = 0;
-        for(int i = 0; i < predictions.length; i++) {
-            if(predictions[i] == 1) {
-                correct++;
-            }
+        if(_remainingPairs == null) {
+            _remainingPairs = RandomMap.toIndexPairs(_randomMap.getMap());
         }
 
-        _predicted.setText(correct + " out of " + predictions.length + " predicted.");
+        _remainingPairs = _trainer.predict(_randomMap.getMap(), _remainingPairs, 3, 3);
+        int total = _randomMap.getMap().length * _randomMap.getMap()[0].length;
+        _predicted.setText(total - _remainingPairs.length + " out of " + total + " predicted.");
     }
 
     private void setupControls() {

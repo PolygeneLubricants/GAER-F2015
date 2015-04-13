@@ -56,15 +56,16 @@ public class KernelTrainer extends BaseTrainer {
      */
     public Pair<Integer, Integer>[] predict(short[][] matrix, Pair<Integer, Integer>[] unsolved, int width, int height) {
         ArrayList<Pair<Integer, Integer>> remainingUnsolved = new ArrayList<>();
-
-
-
-        for(SupportVector vector : vectors) {
-            svm_node[] nodeVector = PARSE VECTOR TO SVM_NODE
-            if(predict(vector) != 1.0) {
-                remainingUnsolved.add();
-            }
+        Parser p = new Parser();
+        for(Pair<Integer, Integer> unsolvedStartIndex : unsolved) {
+            SupportVector vector = p.parseSingle(matrix, unsolvedStartIndex.getKey(), unsolvedStartIndex.getValue(), width, height);
+            svm_node[] nodeVector = toSvmNodeArray(vector);
+            if(predict(nodeVector) != 1.0)
+                remainingUnsolved.add(unsolvedStartIndex);
         }
+
+        Pair[] arr = remainingUnsolved.toArray(new Pair[remainingUnsolved.size()]);
+        return arr;
     }
 
     public double predict(svm_node[] vector) {
