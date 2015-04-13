@@ -69,7 +69,7 @@ public class RandomMap {
                 neighhborValues = 0;
 
                 //CHECK IF NEIGHBORS EXIST
-                if (i-1 > 0) {
+                if (i-1 >= 0) {
                     neighhborValues += altitudeMap[i - 1][j];
                     counter++;
                 }
@@ -78,7 +78,7 @@ public class RandomMap {
                     counter++;
                 }
 
-                if (j-1 > 0) {
+                if (j-1 >= 0) {
                     neighhborValues += altitudeMap[i][j - 1];
                     counter++;
                 }
@@ -91,8 +91,6 @@ public class RandomMap {
                     blurredMap[i][j] = altitudeMap[i][j];
                 }else{
                     float neighborAvg = neighhborValues / counter;
-
-                    //short newHeight = (short) ( ( neighborAvg + altitudeMap[i][j] ) / 2 );
                     short newHeight = (short)neighborAvg;
 
                     blurredMap[i][j] = newHeight;
