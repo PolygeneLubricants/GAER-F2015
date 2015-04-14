@@ -57,52 +57,112 @@ public class RandomMap {
     }
 
 
-    public static short[][] blurMap(short[][] altitudeMap){
+    public static short[][] blurMap(short[][] altitudeMap, int maxLayer){
         short[][] blurredMap = new short[altitudeMap.length][altitudeMap[0].length];
 
-        int counter = 0;
-        short neighhborValues = 0;
+        //For each node in array
+        for(int row = 0; row < altitudeMap.length; row++){
+            for(int column = 0; column < altitudeMap[row].length; column++) {
 
-        for(int i = 0; i<altitudeMap.length; i++){
-            for(int j = 0; j< altitudeMap[i].length; j++) {
-                counter = 0;
-                neighhborValues = 0;
+                //Print position and height
+                System.out.println("[" + row + "][" + column + "]: " + altitudeMap[row][column] );
 
-                //CHECK IF NEIGHBORS EXIST
-                if (i-1 >= 0) {
-                    neighhborValues += altitudeMap[i - 1][j];
-                    counter++;
+                float newHeight = altitudeMap[row][column]; //Updated height for node
+
+                //For each layer
+                for(int currentLayer = 1; currentLayer <= maxLayer; currentLayer++) {
+
+                    short layerValue = 0; //Total height of layer nodes
+                    int nodeCounter = 0; //Count of relevant nodes in layer
+
+                    //NORTH- AND SOUTHSIDE
+                    for (int k = column - currentLayer; k <= column + currentLayer; k++) {
+
+                        //Max value on j dimension (aka y)
+                        int kMax = altitudeMap[row].length;
+
+                        //NORTH
+                        //Check if within array boundaries
+                        if (k >= 0 && k < kMax && row-currentLayer >= 0) {
+
+                            //Add value
+                            layerValue += altitudeMap[row - currentLayer][k];
+                            nodeCounter++;
+                            System.out.println("NORTH[" + (row - currentLayer) + "][" + k + "]: " + altitudeMap[row - currentLayer][k]);
+                        }
+
+                        //SOUTH
+                        //Check if within array boundaries
+                        if (k >= 0 && k < kMax && row+currentLayer < altitudeMap.length) {
+
+                            //Add value
+                            layerValue += altitudeMap[row + currentLayer][k];
+                            nodeCounter++;
+                            System.out.println("SOUTH[" + (row + currentLayer) + "][" + k + "]: " + altitudeMap[row + currentLayer][k]);
+                        }
+                    }
+
+
+                    //EAST- AND WESTSIDE
+                    for (int k = row - (currentLayer-1); k <= row + (currentLayer-1); k++) {
+
+                        //Max value on i dimension (aka y)
+                        int kMax = altitudeMap.length;
+
+                        //EAST
+                        //Check if within array boundaries
+                        if (k >= 0 && k < kMax && column-currentLayer >= 0) {
+
+                            //Add value
+                            layerValue += altitudeMap[k][column-currentLayer];
+                            nodeCounter++;
+                            System.out.println("EAST[" + k + "][" + (column - currentLayer) + "]: " + altitudeMap[k][column - currentLayer]);
+                        }
+
+                        //WEST
+                        //Check if within array boundaries
+                        if (k >= 0 && k < kMax && column+currentLayer < altitudeMap[row].length) {
+
+                            //Add value
+                            layerValue += altitudeMap[k][column+currentLayer];
+                            nodeCounter++;
+                            System.out.println("WEST[" + k + "][" + (column + currentLayer) + "]: " + altitudeMap[k][column + currentLayer]);
+                        }
+
+                    }
+
+
+                    //If more than zero nodes in this layer
+                    if (nodeCounter != 0) {
+                        //Add the average for this layer divided by the layer count+1
+                        newHeight += (short) (layerValue / nodeCounter / (currentLayer + 1));
+
+                        System.out.println("Avg = " + " = " + layerValue + " / " + nodeCounter + " / " + (currentLayer + 1) );
+                    }
                 }
-                if (i+1 < altitudeMap.length) {
-                    neighhborValues += altitudeMap[i + 1][j];
-                    counter++;
-                }
 
-                if (j-1 >= 0) {
-                    neighhborValues += altitudeMap[i][j - 1];
-                    counter++;
-                }
-                if (j+1 < altitudeMap[i].length) {
-                    neighhborValues += altitudeMap[i][j + 1];
-                    counter++;
-                }
+                //Division for dividing with newHeight
+                float division = 1.0f;
+                for(int c = 2; c <= (maxLayer + 1); c++) division += 1.0/c;
 
-                if(counter == 0){
-                    blurredMap[i][j] = altitudeMap[i][j];
-                }else{
-                    float neighborAvg = neighhborValues / counter;
-                    short newHeight = (short)neighborAvg;
+                //Print out the divider and temporary new height
+                System.out.println("division: " + division);
+                System.out.println("the new height:" + newHeight);
 
-                    blurredMap[i][j] = newHeight;
-                }
+                //Divide newHeight, based on layer count
+                newHeight /= division;
 
+                //Assign new height to blurred map
+                blurredMap[row][column] = (short)newHeight;
 
+                //Print position and final updated height
+                System.out.println("New height[" + row + "][" + column + "]: " + newHeight);
+                System.out.println("------");
             }
         }
 
+        //Return map with blurred values
         return blurredMap;
-
     }
-
 
 }

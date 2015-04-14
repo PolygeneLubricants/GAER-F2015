@@ -65,7 +65,7 @@ public class ParserTest {
 
         //short[][] altitudeMap = RandomMap.blurMap(RandomMap.CreateRandomMap());
         for(int i = 0; i < 2; i++)
-            altitudeMap = RandomMap.blurMap(altitudeMap);
+            altitudeMap = RandomMap.blurMap(altitudeMap, 2);
 
 
 /*        try {
