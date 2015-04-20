@@ -26,7 +26,7 @@ public class Parser {
         bb.flip();
 
         // Choose the right endianness
-        ShortBuffer sb = bb.order(ByteOrder.LITTLE_ENDIAN).asShortBuffer();
+        ShortBuffer sb = bb.order(ByteOrder.BIG_ENDIAN).asShortBuffer();
         short[][] matrix = new short[1201][];
         int rowNumber = 0;
         while (sb.remaining() > 0) {
