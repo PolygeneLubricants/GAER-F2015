@@ -1,11 +1,26 @@
 package RandomMapGenerator;
 
+import javafx.util.Pair;
+
+import java.util.ArrayList;
+
 /**
  * Created by patrikk on 30/03/2015.
  */
 public class RandomMap {
-    short[][] matrix;
     static float landToWaterRatio = 0.5f;
+
+    public static Pair<Integer, Integer>[] toIndexPairs(short[][] matrix) {
+        ArrayList<Pair<Integer, Integer>> pairs = new ArrayList<>();
+        for(int i = 0; i < matrix.length; i++) {
+            for(int j = 0; j < matrix[0].length; j++) {
+                pairs.add(new Pair<>(i, j));
+            }
+        }
+
+        Pair[] arr = pairs.toArray(new Pair[pairs.size()]);
+        return arr;
+    }
 
     public static short[][] CreateRandomMap(int width, int height){
         short[][] randomMap = new short[height][width];
@@ -16,7 +31,6 @@ public class RandomMap {
                 randomMap[i][j] = (short) ( (Math.random() - landToWaterRatio ) * initialMaxHeight );
             }
         }
-
 
         return randomMap;
     }
@@ -47,15 +61,6 @@ public class RandomMap {
 
         return maxLow;
     }
-
-    public void setMatrix(short[][] matrix) {
-        this.matrix = matrix;
-    }
-
-    public short[][] getMatrix() {
-        return matrix;
-    }
-
 
     public static short[][] blurMap(short[][] altitudeMap, int maxLayer){
         short[][] blurredMap = new short[altitudeMap.length][altitudeMap[0].length];

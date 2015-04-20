@@ -97,4 +97,17 @@ public class Parser {
 
         return vector;
     }
+
+    public SupportVector parseSingle(short[][] matrix, int fromCol, int fromRow, int width, int height) {
+        if(fromCol + width > matrix[0].length) {
+            fromCol = matrix[0].length - width;
+        }
+
+        if(fromRow + height > matrix.length) {
+            fromRow = matrix.length - height;
+        }
+
+        short[][] shortMatrix = cut(matrix, fromCol, fromRow, width, height);
+        return parse(shortMatrix, width, height)[0];
+    }
 }

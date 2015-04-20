@@ -4,6 +4,7 @@ import Preprocessor.Parser;
 import RandomMapGenerator.RandomMap;
 import SupportVectorMachine.Model.SupportVector;
 import SupportVectorMachine.Trainers.KernelTrainer;
+import javafx.util.Pair;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,12 +22,14 @@ public class MainView {
     PixelMap _realMap;
     KernelTrainer _trainer;
     Label _predicted;
+    Pair<Integer, Integer>[] _remainingPairs;
 
     Panel mapPanel;
     Panel controlPanel;
 
     public MainView() {
         _trainer = new KernelTrainer();
+        loadModel();
         _frame = new JFrame("MapGenerator");
         _frame.setLayout(new BorderLayout());
         mapPanel = new Panel();
@@ -56,19 +59,15 @@ public class MainView {
     }
 
     public void classify() {
-        loadModel();
-        Parser p = new Parser();
+        _predicted.setText("");
 
-        SupportVector[] randomVectors = p.parse(_randomMap.getMap(), 3, 3);
-        double[] predictions = _trainer.predict(_trainer.toSvmNodeMatrix(randomVectors));
-        int correct = 0;
-        for(int i = 0; i < predictions.length; i++) {
-            if(predictions[i] == 1) {
-                correct++;
-            }
+        if(_remainingPairs == null) {
+            _remainingPairs = RandomMap.toIndexPairs(_randomMap.getMap());
         }
 
-        _predicted.setText(correct + " out of " + predictions.length + " predicted.");
+        _remainingPairs = _trainer.predict(_randomMap.getMap(), _remainingPairs, 3, 3);
+        int total = _randomMap.getMap().length * _randomMap.getMap()[0].length;
+        _predicted.setText(total - _remainingPairs.length + " out of " + total + " predicted.");
     }
 
     private void setupControls() {
@@ -88,6 +87,8 @@ public class MainView {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // STEP
+                short[][] blurredRandomMap = RandomMap.blurMap(_randomMap.getMap());
+                setRandomMap(blurredRandomMap); // TODO: Change to actual step
             }
         });
 
@@ -118,7 +119,7 @@ public class MainView {
     }
 
     private void setupRandomGroup() {
-        setRandomMap(100, 100);
+        generateRandomMap(100, 100);
         Panel randomGroup = new Panel();
         randomGroup.setLayout(new BorderLayout());
         Label name = new Label("Random map");
@@ -139,8 +140,11 @@ public class MainView {
         mapPanel.add(realGroup, BorderLayout.EAST);
     }
 
-    public void setRandomMap(int width, int height) {
-        short[][] randomMap = RandomMap.CreateRandomMap(width, height);
+    public void generateRandomMap(int width, int height) {
+        setRandomMap(RandomMap.CreateRandomMap(width, height));
+    }
+
+    public void setRandomMap(short[][] randomMap) {
         if(_randomMap == null) {
             _randomMap = createMap(randomMap);
         }
