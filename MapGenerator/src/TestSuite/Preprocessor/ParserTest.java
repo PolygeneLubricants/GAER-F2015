@@ -61,15 +61,18 @@ public class ParserTest {
     public void testVisualIdentification() {
         Parser p = new Parser();
 
-        short[][] altitudeMap = RandomMap.CreateRandomMap(100, 100);
+        short[][] altitudeMap = RandomMap.CreateRandomMap(200, 200);
 
-        //short[][] altitudeMap = null;
-        //for(int i = 0; i < 2; i++)
-        //    altitudeMap = RandomMap.blurMap(altitudeMap, 2);
+        int iterations = 4; //if 3, then fucked up
+        int neighbors = 5;
+
+        //short[][] altitudeMap = RandomMap.blurMap(RandomMap.CreateRandomMap());
+        for(int i = 0; i < iterations; i++)
+            altitudeMap = RandomMap.blurMap(altitudeMap, neighbors);
 
 
-        /*try {
-            altitudeMap = p.read("./data/raw/N32/N52E007.hgt");
+/*        try {
+            //altitudeMap = p.read("./data/raw/N32/N52E007.hgt");
         } catch (IOException e) {
             e.printStackTrace();
         }*/

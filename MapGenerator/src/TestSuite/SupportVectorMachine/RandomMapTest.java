@@ -23,21 +23,21 @@ public class RandomMapTest {
 
     @Test
     public void testMap(){
-        /*short[][] matrix = new short[][]{
-                {40, 20, 40, 20, 10},
-                {10, 20, 10, 10, 10},
-                {40, 10,  0, 10, 40},
-                {10, 20, 10, 10, 10},
-                {10, 20, 40, 10, 10}
-        };*/
-
         short[][] matrix = new short[][]{
-                {10, -40, 0, 0, 0},
-                {10, 10, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
+                {40, 20, 40, 20, 10},
+                {10, 20, 50, 10, 10},
+                {40, 10, 400, 10, 40},
+                {10, 20, 10, 10, 10},
+                {10, 60, 40, 60, 10}
         };
+
+        /*short[][] matrix = new short[][]{
+                {-10, 0, 0, 0, -10},
+                {0, 0, 0, 0, 0},
+                {0, 0, 100, 0, 0},
+                {0, 0, 0, 0, 0},
+                {-10, 0, 0, 0, -10}
+        };*/
 
 
         System.out.println("INITIAL RANDOM MAP: ");
@@ -50,18 +50,25 @@ public class RandomMapTest {
 
         int max = RandomMap.FindMaxHeight(matrix);
 
-        System.out.println("BLURRED MAP: ");
 
-        for(int i = 0; i<1; i++) {
-            matrix = RandomMap.blurMap(matrix, 2);
+
+        //Blur the map
+        for(int i = 0; i<5; i++) {
+            matrix = RandomMap.blurMap(matrix, 1);
         }
 
+        //PRINT OUT THE MAP
+        System.out.println();
+        System.out.println("BLURRED MAP: ");
         for(short[] index : matrix){
             for(short s : index){
                 System.out.print(s + " ");
             }
             System.out.println();
         }
+
+        //Create mountain range
+        RandomMap.createMountainRange(matrix);
 
     }
 }

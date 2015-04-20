@@ -42,7 +42,7 @@ public class RandomMap {
             for(int j = 0; j < altitudeMap[i].length; j++)
                 if(altitudeMap[i][j] > maxHeight) {
                     maxHeight = altitudeMap[i][j];
-                    System.out.println("New maxHeight: " + maxHeight);
+                    //System.out.println("New maxHeight: " + maxHeight);
                 }
 
         return maxHeight;
@@ -55,7 +55,7 @@ public class RandomMap {
             for(int j = 0; j < altitudeMap[i].length; j++)
                 if(altitudeMap[i][j] < maxLow) {
                     maxLow = altitudeMap[i][j];
-                    System.out.println("New maxLow: " + maxLow);
+                    //System.out.println("New maxLow: " + maxLow);
                 }
         maxLow = (short) Math.abs(maxLow);
 
@@ -68,9 +68,6 @@ public class RandomMap {
         //For each node in array
         for(int row = 0; row < altitudeMap.length; row++){
             for(int column = 0; column < altitudeMap[row].length; column++) {
-
-                //Print position and height
-                System.out.println("[" + row + "][" + column + "]: " + altitudeMap[row][column] );
 
                 float newHeight = altitudeMap[row][column]; //Updated height for node
 
@@ -93,7 +90,6 @@ public class RandomMap {
                             //Add value
                             layerValue += altitudeMap[row - currentLayer][k];
                             nodeCounter++;
-                            System.out.println("NORTH[" + (row - currentLayer) + "][" + k + "]: " + altitudeMap[row - currentLayer][k]);
                         }
 
                         //SOUTH
@@ -103,7 +99,6 @@ public class RandomMap {
                             //Add value
                             layerValue += altitudeMap[row + currentLayer][k];
                             nodeCounter++;
-                            System.out.println("SOUTH[" + (row + currentLayer) + "][" + k + "]: " + altitudeMap[row + currentLayer][k]);
                         }
                     }
 
@@ -121,7 +116,6 @@ public class RandomMap {
                             //Add value
                             layerValue += altitudeMap[k][column-currentLayer];
                             nodeCounter++;
-                            System.out.println("EAST[" + k + "][" + (column - currentLayer) + "]: " + altitudeMap[k][column - currentLayer]);
                         }
 
                         //WEST
@@ -131,7 +125,6 @@ public class RandomMap {
                             //Add value
                             layerValue += altitudeMap[k][column+currentLayer];
                             nodeCounter++;
-                            System.out.println("WEST[" + k + "][" + (column + currentLayer) + "]: " + altitudeMap[k][column + currentLayer]);
                         }
 
                     }
@@ -140,9 +133,7 @@ public class RandomMap {
                     //If more than zero nodes in this layer
                     if (nodeCounter != 0) {
                         //Add the average for this layer divided by the layer count+1
-                        newHeight += (short) (layerValue / nodeCounter / (currentLayer + 1));
-
-                        System.out.println("Avg = " + " = " + layerValue + " / " + nodeCounter + " / " + (currentLayer + 1) );
+                        newHeight += layerValue / nodeCounter / (currentLayer + 1);
                     }
                 }
 
@@ -150,24 +141,112 @@ public class RandomMap {
                 float division = 1.0f;
                 for(int c = 2; c <= (maxLayer + 1); c++) division += 1.0/c;
 
-                //Print out the divider and temporary new height
-                System.out.println("division: " + division);
-                System.out.println("the new height:" + newHeight);
-
                 //Divide newHeight, based on layer count
                 newHeight /= division;
 
                 //Assign new height to blurred map
-                blurredMap[row][column] = (short)newHeight;
-
-                //Print position and final updated height
-                System.out.println("New height[" + row + "][" + column + "]: " + newHeight);
-                System.out.println("------");
+                blurredMap[row][column] = (short)Math.round(newHeight);
             }
         }
 
         //Return map with blurred values
         return blurredMap;
+    }
+
+
+    public static short[][] createMountainRange(short[][] altitudeMap){
+        short[][] alteredMap = new short[altitudeMap.length][altitudeMap[0].length];
+
+
+        //FIND MAX HEIGHT
+        short maxHeight = FindMaxHeight(altitudeMap);
+        System.out.println("maxH: " + maxHeight);
+
+        int randomRow = 0;
+        int randomCol = 0;
+
+        //FIND RANDOM NODE WITH AT LEAST X% of MaxHeight
+        for(int i = 0; i <= 10; i++){
+
+            randomRow = (int) (Math.random() * altitudeMap.length);
+            randomCol = (int) (Math.random() * altitudeMap[0].length);
+
+            //If node is more than 80% of maxHeight, then break
+            if(altitudeMap[randomRow][randomCol] >= maxHeight * 0.8){
+                System.out.println("i er " + i);
+                break;
+            }else
+                if(i == 10){
+                    randomRow = (int) (Math.random() * altitudeMap.length);
+                    randomCol = (int) (Math.random() * altitudeMap[0].length);
+                    break;
+                }
+        }
+
+
+        System.out.print("[" + randomRow + "][" + randomCol + "] = " + altitudeMap[randomRow][randomCol] + " --> ");
+
+        //Grow the node (and neighbors?)
+        altitudeMap[randomRow][randomCol] += Math.sqrt(altitudeMap[randomRow][randomCol]);
+
+        System.out.println(altitudeMap[randomRow][randomCol]);
+
+
+        //For each layer, the neighboring nodes should be lifted
+        int maxLayer = 1;
+        for(int currentLayer = 1; currentLayer <= maxLayer; currentLayer++) {
+
+            for (int k = randomCol - currentLayer; k <= randomCol + currentLayer; k++) {
+
+                //Max value on j dimension (aka y)
+                int kMax = altitudeMap[randomRow].length;
+
+                //NORTH
+                //Check if within array boundaries
+                if (k >= 0 && k < kMax && randomRow - currentLayer >= 0) {
+                    altitudeMap[randomRow - currentLayer][k] += Math.sqrt(altitudeMap[randomRow - currentLayer][k]);
+                }
+
+                //SOUTH
+                //Check if within array boundaries
+                if (k >= 0 && k < kMax && randomRow+currentLayer < altitudeMap.length) {
+                    altitudeMap[randomRow + currentLayer][k] += Math.sqrt(altitudeMap[randomRow + currentLayer][k]);
+                }
+            }
+
+            //EAST- AND WESTSIDE
+            for (int k = randomRow - (currentLayer-1); k <= randomRow + (currentLayer-1); k++) {
+
+                //Max value on i dimension (aka y)
+                int kMax = altitudeMap.length;
+
+                //EAST
+                //Check if within array boundaries
+                if (k >= 0 && k < kMax && randomCol - currentLayer >= 0) {
+
+                    altitudeMap[k][randomCol - currentLayer] += Math.sqrt(altitudeMap[k][randomCol - currentLayer]);
+                }
+
+                //WEST
+                //Check if within array boundaries
+                if (k >= 0 && k < kMax && randomCol + currentLayer < altitudeMap[randomRow].length) {
+
+                    altitudeMap[k][randomCol + currentLayer] += Math.sqrt(altitudeMap[k][randomCol + currentLayer]);
+                }
+            }
+        }
+
+        //PRINT OUT ALTERED MAP
+        System.out.println();
+        System.out.println("HEIGHT ALTERED MAP: ");
+        for(short[] index : altitudeMap){
+            for(short s : index){
+                System.out.print(s + " ");
+            }
+            System.out.println();
+        }
+        //return alteredMap;
+        return altitudeMap;
     }
 
 }
