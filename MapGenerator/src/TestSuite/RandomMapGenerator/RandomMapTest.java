@@ -21,7 +21,7 @@ public class RandomMapTest {
     public void testRandomPredictIteration() {
         KernelTrainer t = new KernelTrainer();
         try {
-            t.loadModel("N52E007.model");
+            t.loadModel("N52E007.model", "N52E007.bounds");
         } catch (IOException e) {
             e.printStackTrace();
         }

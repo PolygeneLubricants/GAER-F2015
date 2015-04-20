@@ -52,7 +52,7 @@ public class MainView {
 
     private void loadModel() {
         try {
-            _trainer.loadModel("N52E007.model");
+            _trainer.loadModel("N52E007.model", "N52E007.bounds");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -87,7 +87,7 @@ public class MainView {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // STEP
-                short[][] blurredRandomMap = RandomMap.blurMap(_randomMap.getMap());
+                short[][] blurredRandomMap = RandomMap.blurMap(_randomMap.getMap(), 2);
                 setRandomMap(blurredRandomMap); // TODO: Change to actual step
             }
         });

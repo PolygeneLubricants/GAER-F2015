@@ -65,7 +65,7 @@ public class KernelTrainerTest {
         SupportVector[] vectors = p.parse(altitudeMap, 3, 3);
         KernelTrainer t = new KernelTrainer();
         try {
-            t.run(vectors, "testKernelRunFragment.model");
+            t.run(vectors, "testKernelRunFragment.model", "testKernelRunFragment.bounds");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -113,7 +113,7 @@ public class KernelTrainerTest {
         SupportVector[] vectors = p.parse(matrix, 3, 3);
         KernelTrainer t = new KernelTrainer();
         try {
-            t.run(vectors, "testKernelRunSmall.model");
+            t.run(vectors, "testKernelRunSmall.model", "testKernelRunSmall.bounds");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -159,7 +159,7 @@ public class KernelTrainerTest {
         SupportVector[] vectors = p.parse(altitudeMap, 10, 10);
         KernelTrainer t = new KernelTrainer();
         try {
-            t.run(vectors, "testKernelRunBig.model");
+            t.run(vectors, "testKernelRunBig.model", "testKernelRunBig.bounds");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -252,7 +252,7 @@ public class KernelTrainerTest {
         KernelTrainer t = new KernelTrainer();
         Parser p = new Parser();
         try {
-            t.loadModel("N52E007.model");
+            t.loadModel("N52E007.model", "N52E007.bounds");
         } catch (IOException e) {
             e.printStackTrace();
         }

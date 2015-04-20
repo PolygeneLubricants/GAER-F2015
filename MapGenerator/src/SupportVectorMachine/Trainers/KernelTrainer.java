@@ -1,13 +1,14 @@
 package SupportVectorMachine.Trainers;
 
 import Preprocessor.Parser;
+import SupportVectorMachine.Model.AltitudeBoundPair;
 import SupportVectorMachine.Model.SupportVector;
 import SupportVectorMachine.Model.SvmNodeMatrix;
 import javafx.util.Pair;
 import libsvm.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 /**
@@ -24,18 +25,32 @@ public class KernelTrainer extends BaseTrainer {
     private svm_model _model;
     private int _nrFold; // Fold number for cross validation
 
+    private AltitudeBoundPair _altitudeBoundPair;
+
+    public AltitudeBoundPair GetAltitudeBoundPair() { return _altitudeBoundPair; }
+
     public KernelTrainer() {
         setParameters();
     }
 
-    public KernelTrainer(String modelFilePath) throws IOException {
+    public KernelTrainer(String modelFilePath, String boundsFilePath) throws IOException {
         setParameters();
-        loadModel(modelFilePath);
+        loadModel(modelFilePath, boundsFilePath);
     }
 
-    public void loadModel(String modelFilePath) throws IOException {
+    public void loadModel(String modelFilePath, String boundsFilePath) throws IOException {
         svm_model model = svm.svm_load_model(modelFilePath);
         _model = model;
+
+        FileInputStream fileIn = new FileInputStream(boundsFilePath);
+        ObjectInputStream in = new ObjectInputStream(fileIn);
+        try {
+            _altitudeBoundPair = (AltitudeBoundPair) in.readObject();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        in.close();
+        fileIn.close();
     }
 
     public double[] predict(SvmNodeMatrix matrix) {
@@ -111,11 +126,23 @@ public class KernelTrainer extends BaseTrainer {
         }
     }
 
-    public void run(SupportVector[] vectors, String fileName) throws IOException
+    public void run(SupportVector[] vectors, String fileName, String boundsFileName) throws IOException
     {
         read(toSvmNodeMatrix(vectors));
         _model = svm.svm_train(_prob, _param);
         svm.svm_save_model(fileName, _model);
+        try
+        {
+            FileOutputStream fileOut =
+                    new FileOutputStream(boundsFileName);
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(_altitudeBoundPair);
+            out.close();
+            fileOut.close();
+        }catch(IOException i)
+        {
+            i.printStackTrace();
+        }
     }
 
     public void run(SupportVector[] vectors)
@@ -155,14 +182,20 @@ public class KernelTrainer extends BaseTrainer {
         int length = vectors.length; // Length of training data
         double[] classification = new double[length]; // This is redundant for our one-class SVM.
         svm_node[][] trainingSet = new svm_node[length][]; // The training set.
+        AltitudeBoundPair globalBounds = new AltitudeBoundPair();
         for(int i = 0; i < length; i++)
         {
             classification[i] = 1; // Since classifications are redundant in our setup, they all belong to the same class, 1.
 
             trainingSet[i] = toSvmNodeArray(vectors[i]);
+            AltitudeBoundPair localBounds = vectors[i].GetAltitudeBounds();
+            if(localBounds.getMax() > globalBounds.getMax())
+                globalBounds.setMax(localBounds.getMax());
+            else if(localBounds.getMin() < globalBounds.getMin())
+                globalBounds.setMin(localBounds.getMin());
         }
 
-        return new SvmNodeMatrix(trainingSet, classification, length);
+        return new SvmNodeMatrix(trainingSet, classification, length, globalBounds);
     }
 
     public svm_node[] toSvmNodeArray(SupportVector supportVector) {
@@ -186,11 +219,13 @@ public class KernelTrainer extends BaseTrainer {
         _prob.l = nodeMatrix.get_length();
         _prob.y = nodeMatrix.get_classification();
         _prob.x = nodeMatrix.get_matrix();
+        _altitudeBoundPair = nodeMatrix.getAltitudeBoundPair();
     }
 
     public static void main(String[] args) {
         String inputDataPath = "./data/raw/N32/N52E007.hgt";
         String outputModelName = "N52E007.model";
+        String boundsModelName = "N52E007.bounds";
         int width = 100;
         int height = 100;
 
@@ -213,7 +248,7 @@ public class KernelTrainer extends BaseTrainer {
         SupportVector[] vectors = p.parse(altitudeMap, 3, 3);
         KernelTrainer t = new KernelTrainer();
         try {
-            t.run(vectors, outputModelName);
+            t.run(vectors, outputModelName, boundsModelName);
         } catch (IOException e) {
             e.printStackTrace();
         }
