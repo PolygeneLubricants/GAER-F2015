@@ -119,7 +119,7 @@ public class MainView {
     }
 
     private void setupRandomGroup() {
-        generateRandomMap(100, 100);
+        generateRandomMap(100, 100, _trainer.GetAltitudeBoundPair().getMin(), _trainer.GetAltitudeBoundPair().getMax());
         Panel randomGroup = new Panel();
         randomGroup.setLayout(new BorderLayout());
         Label name = new Label("Random map");
@@ -140,8 +140,8 @@ public class MainView {
         mapPanel.add(realGroup, BorderLayout.EAST);
     }
 
-    public void generateRandomMap(int width, int height) {
-        setRandomMap(RandomMap.CreateRandomMap(width, height));
+    public void generateRandomMap(int width, int height, short min, short max) {
+        setRandomMap(RandomMap.CreateRandomMap(width, height, min, max));
     }
 
     public void setRandomMap(short[][] randomMap) {

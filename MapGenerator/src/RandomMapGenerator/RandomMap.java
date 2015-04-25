@@ -3,12 +3,12 @@ package RandomMapGenerator;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by patrikk on 30/03/2015.
  */
 public class RandomMap {
-    static float landToWaterRatio = 0.5f;
 
     public static Pair<Integer, Integer>[] toIndexPairs(short[][] matrix) {
         ArrayList<Pair<Integer, Integer>> pairs = new ArrayList<>();
@@ -22,13 +22,13 @@ public class RandomMap {
         return arr;
     }
 
-    public static short[][] CreateRandomMap(int width, int height){
+    public static short[][] CreateRandomMap(int width, int height, short min, short max){
+        Random random = new Random();
         short[][] randomMap = new short[height][width];
-        short initialMaxHeight = 100;
 
         for(int i = 0; i<randomMap.length; i++){
             for(int j = 0; j< randomMap[i].length; j++){
-                randomMap[i][j] = (short) ( (Math.random() - landToWaterRatio ) * initialMaxHeight );
+                randomMap[i][j] = (short)(random.nextInt(max - min) + min);
             }
         }
 

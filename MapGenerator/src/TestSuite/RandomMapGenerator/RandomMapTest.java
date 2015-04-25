@@ -26,9 +26,17 @@ public class RandomMapTest {
             e.printStackTrace();
         }
 
-        short[][] randMap = RandomMap.CreateRandomMap(100, 100);
+        short[][] randMap = RandomMap.CreateRandomMap(100, 100, t.GetAltitudeBoundPair().getMin(), t.GetAltitudeBoundPair().getMax());
         Pair<Integer, Integer>[] remainingPairs = RandomMap.toIndexPairs(randMap);
-        remainingPairs = t.predict(randMap, remainingPairs, 3, 3);
+        int oldTotal = remainingPairs.length;
+        while(remainingPairs.length == oldTotal)
+        {
+            oldTotal = remainingPairs.length;
+            randMap = RandomMap.CreateRandomMap(100, 100, t.GetAltitudeBoundPair().getMin(), t.GetAltitudeBoundPair().getMax());
+            randMap = RandomMap.blurMap(randMap, 1);
+            remainingPairs = RandomMap.toIndexPairs(randMap);
+            remainingPairs = t.predict(randMap, remainingPairs, 3, 3);
+        }
 
     }
 }

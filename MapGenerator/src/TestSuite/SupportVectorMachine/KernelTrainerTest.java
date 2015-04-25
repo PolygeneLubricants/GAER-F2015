@@ -89,7 +89,7 @@ public class KernelTrainerTest {
 
         System.out.print("Prediction Accuracy = " + 100.0 * totalCorrect / predictions.length + "%\n");
 
-        //t.crossValidate();
+        t.crossValidate();
     }
 
     @Test
@@ -257,7 +257,7 @@ public class KernelTrainerTest {
             e.printStackTrace();
         }
 
-        short[][] randomMap = RandomMap.CreateRandomMap(100, 100);
+        short[][] randomMap = RandomMap.CreateRandomMap(100, 100, t.GetAltitudeBoundPair().getMin(), t.GetAltitudeBoundPair().getMax());
         SupportVector[] randomVectors = p.parse(randomMap, 3, 3);
         double[] predictions = t.predict(t.toSvmNodeMatrix(randomVectors));
         int correct = 0;

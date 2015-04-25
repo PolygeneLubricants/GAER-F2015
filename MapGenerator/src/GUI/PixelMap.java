@@ -33,11 +33,13 @@ public class PixelMap extends JPanel {
 
     public void fillCanvas(short[][] altitudeMap) {
         map = altitudeMap;
+        int max = 5000;
+        int min = -5000;
 
         for (int x = 0; x < canvas.getWidth(); x++) {
             for (int y = 0; y < canvas.getHeight(); y++) {
-                int green = altitudeMap[x][y] > 0 ? (altitudeMap[x][y] * 255 / Short.MAX_VALUE) : 0;
-                int blue = altitudeMap[x][y] < 0 ? ((altitudeMap[x][y] * -1 * 255) / Short.MAX_VALUE) : 0;
+                int green = altitudeMap[x][y] > 0 ? (altitudeMap[x][y] * 255 / max) : 0;
+                int blue = altitudeMap[x][y] < 0 ? ((altitudeMap[x][y] * 255) / min) : 0;
 
                 Color c = new Color(0, green, blue);
                 canvas.setRGB(x, y, c.getRGB());

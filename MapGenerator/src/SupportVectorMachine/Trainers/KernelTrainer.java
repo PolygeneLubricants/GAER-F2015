@@ -84,7 +84,8 @@ public class KernelTrainer extends BaseTrainer {
     }
 
     public double predict(svm_node[] vector) {
-        return svm.svm_predict(_model, vector);
+        double prediction = svm.svm_predict(_model, vector);
+        return prediction;
     }
 
     public void crossValidate()
