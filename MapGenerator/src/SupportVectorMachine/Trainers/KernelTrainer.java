@@ -223,9 +223,17 @@ public class KernelTrainer extends BaseTrainer {
     }
 
     public static void main(String[] args) {
+        // North Germany
+        /*
         String inputDataPath = "./data/raw/N32/N52E007.hgt";
         String outputModelName = "N52E007.model";
         String boundsModelName = "N52E007.bounds";
+        */
+
+        // Swiss alps
+        String inputDataPath = "./data/raw/N47/N47E007.hgt";
+        String outputModelName = "N47E007.model";
+        String boundsModelName = "N47E007.bounds";
         int width = 200;
         int height = 200;
 

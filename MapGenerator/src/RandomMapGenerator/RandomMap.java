@@ -1,5 +1,6 @@
 package RandomMapGenerator;
 
+import SupportVectorMachine.Model.AltitudeBoundPair;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
@@ -60,6 +61,21 @@ public class RandomMap {
         maxLow = (short) Math.abs(maxLow);
 
         return maxLow;
+    }
+
+    public static short[][] CreateNewRandomVector(short[][] map, int fromRow, int fromCol, int height, int width, AltitudeBoundPair bounds) {
+        // If the new vector is on the edge, we ignore it, as it has been modified previously.
+        if(fromRow + height >= map.length || fromCol + width >= map[0].length)
+            return map;
+
+        short[][] randomVector = RandomMap.CreateRandomMap(width, height, bounds.getMin(), bounds.getMax());
+        for(int i = 0; i < height; i++) {
+            for(int j = 0; j < width; j++) {
+                map[i + fromRow][j + fromCol] = randomVector[i][j];
+            }
+        }
+
+        return map;
     }
 
     public static short[][] blurMap(short[][] altitudeMap, int maxLayer){

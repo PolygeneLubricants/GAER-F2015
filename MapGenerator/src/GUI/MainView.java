@@ -27,6 +27,8 @@ public class MainView {
 
     Panel mapPanel;
     Panel controlPanel;
+    private static String mapFile = "N47E007";
+    private static String mapPath = "./data/raw/N47/N47E007.hgt";
 
     public MainView() {
         _trainer = new KernelTrainer();
@@ -53,7 +55,7 @@ public class MainView {
 
     private void loadModel() {
         try {
-            _trainer.loadModel("N52E007.model", "N52E007.bounds");
+            _trainer.loadModel(mapFile + ".model", mapFile + ".bounds");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -83,7 +85,7 @@ public class MainView {
         });
 
         // STEP
-        Button stepButton = new Button("Step");
+        Button stepButton = new Button("Blur");
         stepButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -93,19 +95,45 @@ public class MainView {
             }
         });
 
+        Button rngButton = new Button("RNG");
+        rngButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                short[][] randomMap = _randomMap.getMap();
+                // STEP
+                for(Pair<Integer, Integer> p : _remainingPairs) {
+                    randomMap = RandomMap.CreateNewRandomVector(randomMap, p.getValue(), p.getKey(), 3, 3, _trainer.GetAltitudeBoundPair());
+                }
+
+                setRandomMap(randomMap);
+                classify();
+            }
+        });
 
         // RUN
         Button runButton = new Button("Run");
         runButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // RUN
+                classify();
+                int oldLength = _remainingPairs.length;
+                do {
+                    short[][] randomMap = _randomMap.getMap();
+                    // RUN
+                    for(Pair<Integer, Integer> p : _remainingPairs) {
+                        randomMap = RandomMap.CreateNewRandomVector(randomMap, p.getValue(), p.getKey(), 3, 3, _trainer.GetAltitudeBoundPair());
+                    }
+
+                    setRandomMap(randomMap);
+                    classify();
+                } while(oldLength == _remainingPairs.length);
             }
         });
 
         controlPanel.add(title);
         controlPanel.add(predictButton);
         controlPanel.add(stepButton);
+        controlPanel.add(rngButton);
         controlPanel.add(runButton);
     }
 
@@ -131,7 +159,7 @@ public class MainView {
     }
 
     private void setupRealGroup() {
-        setRealMap("./data/raw/N32/N52E007.hgt", 0, 0, 100, 100);
+        setRealMap(mapPath, 0, 0, 200, 200);
         Panel realGroup = new Panel();
         realGroup.setLayout(new BorderLayout());
         Label name = new Label("Real map");
