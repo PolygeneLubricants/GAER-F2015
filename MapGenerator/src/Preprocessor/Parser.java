@@ -48,7 +48,6 @@ public class Parser {
             cutMatrix[i] = new short[width];
             for(int j = 0; j < width; j++) {
                 cutMatrix[i][j] = matrix[i + fromRow][j + fromCol];
-                cutMatrix[i][j] = matrix[i][j];
             }
         }
 

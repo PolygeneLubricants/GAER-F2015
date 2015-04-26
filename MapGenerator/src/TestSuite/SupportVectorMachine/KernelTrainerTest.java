@@ -61,7 +61,7 @@ public class KernelTrainerTest {
             e.printStackTrace();
         }
 
-        altitudeMap = p.cut(altitudeMap, 0, 0, 100, 100);
+        altitudeMap = p.cut(altitudeMap, 0, 0, 200, 200);
         SupportVector[] vectors = p.parse(altitudeMap, 3, 3);
         KernelTrainer t = new KernelTrainer();
         try {
@@ -77,7 +77,7 @@ public class KernelTrainerTest {
             e.printStackTrace();
         }
 
-        testMap = p.cut(testMap, 50, 50, 50, 50);
+        testMap = p.cut(testMap, 200, 200, 50, 50);
         vectors = p.parse(testMap, 3, 3);
         double[] predictions = t.predict(t.toSvmNodeMatrix(vectors));
 

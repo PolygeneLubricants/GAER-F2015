@@ -164,7 +164,7 @@ public class KernelTrainer extends BaseTrainer {
         _param.svm_type = svm_parameter.ONE_CLASS;
         _param.kernel_type = svm_parameter.RBF;
         _param.degree = 3;
-        _param.gamma = 0.000000001;	// 1/num_features
+        _param.gamma = 0.0001;	// 1/num_features
         _param.coef0 = 0;
         _param.nu = 0.08;
         _param.cache_size = 10;
@@ -227,8 +227,8 @@ public class KernelTrainer extends BaseTrainer {
         String inputDataPath = "./data/raw/N32/N52E007.hgt";
         String outputModelName = "N52E007.model";
         String boundsModelName = "N52E007.bounds";
-        int width = 100;
-        int height = 100;
+        int width = 200;
+        int height = 200;
 
         if(args.length != 0) {
             inputDataPath = args[0];
