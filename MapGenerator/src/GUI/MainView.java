@@ -2,6 +2,7 @@ package GUI;
 
 import Preprocessor.Parser;
 import RandomMapGenerator.RandomMap;
+import SupportVectorMachine.Model.AltitudeBoundPair;
 import SupportVectorMachine.Model.SupportVector;
 import SupportVectorMachine.Trainers.KernelTrainer;
 import javafx.util.Pair;
@@ -146,7 +147,7 @@ public class MainView {
 
     public void setRandomMap(short[][] randomMap) {
         if(_randomMap == null) {
-            _randomMap = createMap(randomMap);
+            _randomMap = createMap(randomMap, _trainer.GetAltitudeBoundPair());
         }
         else {
             _randomMap.fillCanvas(randomMap);
@@ -164,15 +165,15 @@ public class MainView {
         }
 
         if(_realMap == null) {
-            _realMap = createMap(realMap);
+            _realMap = createMap(realMap, _trainer.GetAltitudeBoundPair());
         }
         else {
             _realMap.fillCanvas(realMap);
         }
     }
 
-    private PixelMap createMap(short[][] map) {
-        PixelMap panel = new PixelMap(map);
+    private PixelMap createMap(short[][] map, AltitudeBoundPair bounds) {
+        PixelMap panel = new PixelMap(map, bounds);
         return panel;
     }
 }

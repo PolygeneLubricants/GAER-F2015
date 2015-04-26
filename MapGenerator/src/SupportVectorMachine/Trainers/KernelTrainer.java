@@ -39,8 +39,7 @@ public class KernelTrainer extends BaseTrainer {
     }
 
     public void loadModel(String modelFilePath, String boundsFilePath) throws IOException {
-        svm_model model = svm.svm_load_model(modelFilePath);
-        _model = model;
+        _model = svm.svm_load_model(modelFilePath);
 
         FileInputStream fileIn = new FileInputStream(boundsFilePath);
         ObjectInputStream in = new ObjectInputStream(fileIn);
