@@ -8,6 +8,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.ShortBuffer;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -59,9 +60,10 @@ public class Parser {
      * @param matrix input matrix.
      * @param width the width of each smaller matrix.
      * @param height the height of each smaller matrix.
+     * @params skip skips amount of cells between each matrix.
      * @return array of vectors, representing each smaller matrix.
      */
-    public SupportVector[] parse(short[][] matrix, int width, int height) {
+    public SupportVector[] parse(short[][] matrix, int width, int height, int skip) {
         if(matrix.length - height < 0 && matrix[0].length - width < 0) {
             throw new IllegalArgumentException("Cannot cut a matrix into pieces larger than it's original size.");
         }
@@ -73,8 +75,7 @@ public class Parser {
         int heightCount = matrix.length - height;
         int widthCount = matrix[0].length - width;
 
-        SupportVector[] vector = new SupportVector[heightCount * widthCount];
-        int curIndex = 0;
+        ArrayList<SupportVector> vector = new ArrayList<>();
 
         // Iterate over matrix
         for(int i = 0; i < heightCount; i++) {
@@ -90,14 +91,19 @@ public class Parser {
                     }
                 }
 
-                vector[curIndex++] = new SupportVector(smallMatrix);
+                vector.add(new SupportVector(smallMatrix));
+                if(j < widthCount + skip)
+                    j = j + skip;
             }
+
+            if(i < heightCount + skip)
+                i = i + skip;
         }
 
-        return vector;
+        return vector.toArray(new SupportVector[vector.size()]);
     }
 
-    public SupportVector parseSingle(short[][] matrix, int fromCol, int fromRow, int width, int height) {
+    public SupportVector parseSingle(short[][] matrix, int fromCol, int fromRow, int width, int height, int skip) {
         if(fromCol + width > matrix[0].length) {
             fromCol = matrix[0].length - width;
         }
@@ -107,6 +113,6 @@ public class Parser {
         }
 
         short[][] shortMatrix = cut(matrix, fromCol, fromRow, width, height);
-        return parse(shortMatrix, width, height)[0];
+        return parse(shortMatrix, width, height, skip)[0];
     }
 }

@@ -25,7 +25,7 @@ public class KernelTrainerTest {
                 {4, 5, 6},
                 {7, 8, 9}
         };
-        SupportVector[] result = p.parse(matrix, 1, 1);
+        SupportVector[] result = p.parse(matrix, 1, 1, 0);
         KernelTrainer t = new KernelTrainer();
         SvmNodeMatrix nodeMatrix = t.toSvmNodeMatrix(result);
         Assert.assertEquals(9, nodeMatrix.get_length());
@@ -34,7 +34,7 @@ public class KernelTrainerTest {
         Assert.assertEquals(0, nodeMatrix.get_matrix()[0][0].index);
         Assert.assertEquals(1.0, nodeMatrix.get_matrix()[0][0].value, 0.0);
 
-        result = p.parse(matrix, 3,3);
+        result = p.parse(matrix, 3,3, 0);
         nodeMatrix = t.toSvmNodeMatrix(result);
         Assert.assertEquals(1, nodeMatrix.get_length());
         Assert.assertEquals(1, nodeMatrix.get_classification().length);
@@ -62,7 +62,7 @@ public class KernelTrainerTest {
         }
 
         altitudeMap = p.cut(altitudeMap, 0, 0, 200, 200);
-        SupportVector[] vectors = p.parse(altitudeMap, 3, 3);
+        SupportVector[] vectors = p.parse(altitudeMap, 3, 3, 0);
         KernelTrainer t = new KernelTrainer();
         try {
             t.run(vectors, "testKernelRunFragment.model", "testKernelRunFragment.bounds");
@@ -78,7 +78,7 @@ public class KernelTrainerTest {
         }
 
         testMap = p.cut(testMap, 200, 200, 50, 50);
-        vectors = p.parse(testMap, 3, 3);
+        vectors = p.parse(testMap, 3, 3, 0);
         double[] predictions = t.predict(t.toSvmNodeMatrix(vectors));
 
         svm_problem problem = t.getProblem();
@@ -110,7 +110,7 @@ public class KernelTrainerTest {
         };
         Parser p = new Parser();
 
-        SupportVector[] vectors = p.parse(matrix, 3, 3);
+        SupportVector[] vectors = p.parse(matrix, 3, 3, 0);
         KernelTrainer t = new KernelTrainer();
         try {
             t.run(vectors, "testKernelRunSmall.model", "testKernelRunSmall.bounds");
@@ -132,7 +132,7 @@ public class KernelTrainerTest {
                 {15, 16, 17, 18, 19, 20, 21, 22, 23, 24}
         };
 
-        SupportVector[] predictVectors = p.parse(testSet, 3, 3);
+        SupportVector[] predictVectors = p.parse(testSet, 3, 3, 0);
 
         double[] predictions = t.predict(t.toSvmNodeMatrix(predictVectors));
         int correct = 0;
@@ -156,7 +156,7 @@ public class KernelTrainerTest {
             e.printStackTrace();
         }
 
-        SupportVector[] vectors = p.parse(altitudeMap, 10, 10);
+        SupportVector[] vectors = p.parse(altitudeMap, 10, 10, 0);
         KernelTrainer t = new KernelTrainer();
         try {
             t.run(vectors, "testKernelRunBig.model", "testKernelRunBig.bounds");
@@ -183,7 +183,7 @@ public class KernelTrainerTest {
         };
         Parser p = new Parser();
 
-        SupportVector[] vectors = p.parse(matrix, 3, 3);
+        SupportVector[] vectors = p.parse(matrix, 3, 3, 0);
         KernelTrainer t = new KernelTrainer();
         t.run(vectors);
 
@@ -234,7 +234,7 @@ public class KernelTrainerTest {
         };
 
         KernelTrainer t = new KernelTrainer();
-        SupportVector[] vectors = p.parse(matrix, 2, 1);
+        SupportVector[] vectors = p.parse(matrix, 2, 1, 0);
         SvmNodeMatrix nodeMatrix = t.toSvmNodeMatrix(vectors);
         nodeMatrix.setClassification(classification);
         t.run(nodeMatrix);
@@ -258,7 +258,7 @@ public class KernelTrainerTest {
         }
 
         short[][] randomMap = RandomMap.CreateRandomMap(100, 100, t.GetAltitudeBoundPair().getMin(), t.GetAltitudeBoundPair().getMax());
-        SupportVector[] randomVectors = p.parse(randomMap, 3, 3);
+        SupportVector[] randomVectors = p.parse(randomMap, 3, 3, 0);
         double[] predictions = t.predict(t.toSvmNodeMatrix(randomVectors));
         int correct = 0;
         for(int i = 0; i < predictions.length; i++) {

@@ -5,6 +5,7 @@ import RandomMapGenerator.RandomMap;
 import SupportVectorMachine.Model.AltitudeBoundPair;
 import SupportVectorMachine.Model.SupportVector;
 import SupportVectorMachine.Trainers.KernelTrainer;
+import TestSuite.SupportVectorMachine.ModelConfig;
 import javafx.util.Pair;
 
 import javax.swing.*;
@@ -68,7 +69,7 @@ public class MainView {
             _remainingPairs = RandomMap.toIndexPairs(_randomMap.getMap());
         }
 
-        _remainingPairs = _trainer.predict(_randomMap.getMap(), _remainingPairs, 3, 3);
+        _remainingPairs = _trainer.predict(_randomMap.getMap(), _remainingPairs, ModelConfig.WIDTH, ModelConfig.HEIGHT, 0);
         int total = _randomMap.getMap().length * _randomMap.getMap()[0].length;
         _predicted.setText(total - _remainingPairs.length + " out of " + total + " predicted.");
     }
@@ -102,7 +103,7 @@ public class MainView {
                 short[][] randomMap = _randomMap.getMap();
                 // STEP
                 for(Pair<Integer, Integer> p : _remainingPairs) {
-                    randomMap = RandomMap.CreateNewRandomVector(randomMap, p.getValue(), p.getKey(), 3, 3, _trainer.GetAltitudeBoundPair());
+                    randomMap = RandomMap.CreateNewRandomVector(randomMap, p.getValue(), p.getKey(), ModelConfig.WIDTH, ModelConfig.HEIGHT, _trainer.GetAltitudeBoundPair());
                 }
 
                 setRandomMap(randomMap);
@@ -121,7 +122,7 @@ public class MainView {
                     short[][] randomMap = _randomMap.getMap();
                     // RUN
                     for(Pair<Integer, Integer> p : _remainingPairs) {
-                        randomMap = RandomMap.CreateNewRandomVector(randomMap, p.getValue(), p.getKey(), 3, 3, _trainer.GetAltitudeBoundPair());
+                        randomMap = RandomMap.CreateNewRandomVector(randomMap, p.getValue(), p.getKey(), ModelConfig.WIDTH, ModelConfig.HEIGHT, _trainer.GetAltitudeBoundPair());
                     }
 
                     setRandomMap(randomMap);

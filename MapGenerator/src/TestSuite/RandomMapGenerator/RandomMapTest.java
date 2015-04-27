@@ -35,7 +35,7 @@ public class RandomMapTest {
             randMap = RandomMap.CreateRandomMap(100, 100, t.GetAltitudeBoundPair().getMin(), t.GetAltitudeBoundPair().getMax());
             randMap = RandomMap.blurMap(randMap, 1);
             remainingPairs = RandomMap.toIndexPairs(randMap);
-            remainingPairs = t.predict(randMap, remainingPairs, 3, 3);
+            remainingPairs = t.predict(randMap, remainingPairs, 3, 3, 0);
         }
 
     }
