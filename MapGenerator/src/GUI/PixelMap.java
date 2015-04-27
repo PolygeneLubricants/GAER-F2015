@@ -53,7 +53,8 @@ public class PixelMap extends JPanel {
 
                 if(green > 255)
                     throw new RuntimeException(String.valueOf(green));
-
+                if(green < 0)
+                    throw new RuntimeException(String.valueOf(green));
                 Color c = new Color(0, green, blue);
                 canvas.setRGB(x, y, c.getRGB());
             }

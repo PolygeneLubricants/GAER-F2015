@@ -15,7 +15,7 @@ public class AltitudeBoundPair implements Serializable {
         _max = 0;
     }
 
-    public AltitudeBoundPair(short max, short min) {
+    public AltitudeBoundPair(short min, short max) {
         _max = max;
         _min = min;
     }

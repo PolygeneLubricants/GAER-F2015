@@ -24,40 +24,35 @@ public class RandomMap {
         return arr;
     }
 
+    /*
+     * For generation random noise for the createDiamondSquareMap() function nodes
+     */
+    public static double randomNumber(double orgValue, int percent){
 
-    @Test
-    public static short[][] createDiamondSquareMap(short[][] randomMap, short min, short max){
+        if(percent > 0) {
+            double noisedValue = 0;
+
+            double percentValue = (double) (orgValue * percent / 100);
+
+            double boundaries = percentValue * 2;
+            double randomNoise = Math.random() * boundaries - percentValue;
+
+            noisedValue = Math.round(orgValue + randomNoise);
+
+            return noisedValue;
+        }else{
+            return orgValue;
+        }
+    }
+
+
+    public static short[][] createDiamondSquareMap(short[][] randomMap, int noisePercent){
 
         //INITIALISATION
-        Random random = new Random();
-
-        int row = randomMap.length;
-        int col = randomMap[0].length;
-
-        /*
-        //Set random corner values
-        //North-West
-        randomMap[0][0] = 0; // (short)(random.nextInt(max - min) + min);
-        ////System.out.println("[0][0]: " + randomMap[0][0]);
-
-        //North-East
-        randomMap[0][col-1] = 10; // (short)(random.nextInt(max - min) + min);
-        ////System.out.println("[0][col-1]: " + randomMap[0][col-1]);
-
-        //South-East
-        randomMap[row-1][col-1] = 0;// (short)(random.nextInt(max - min) + min);
-        ////System.out.println("[row][0]: " + randomMap[row-1][col-1]);
-
-        //South-West
-        randomMap[row-1][0] = 10; //(short)(random.nextInt(max - min) + min);
-        ////System.out.println("[row-1][0]: " + randomMap[row-1][0]);
-        */
-
         int n = 1;
-        //int interval = (col-1)/2;
 
-        //GOES INTO THE LOOP!
-        for(int interval = col-1; interval >= 2; interval /= 2) {
+        //GO INTO THE LOOP!
+        for(int interval = randomMap.length-1; interval >= 2; interval /= 2) {
             //System.out.println("interval: " + interval);
             int halfInterval = interval / 2;
 
@@ -75,71 +70,83 @@ public class RandomMap {
                     cornerAvg += randomMap[x - halfInterval][y + halfInterval];
                     cornerAvg += randomMap[x + halfInterval][y + halfInterval];
 
-                    randomMap[x][y] = (short) Math.round(cornerAvg / 4);
-                    //System.out.println("[" + x + "][" + y + "]: " + randomMap[x][y]);
+                    double nodeValue = cornerAvg / 4;
+                    nodeValue = randomNumber(nodeValue, noisePercent);
+
+                    //CONSTANT: Make a positive or negative constant
+                    //Still has bugs, as the max height can be exceeded
+                    /*
+                    if(n == 1)
+                        if(Math.random() >0.5)
+                            nodeValue += Math.sqrt(nodeValue*5);
+                        else
+                            nodeValue -= Math.sqrt(nodeValue*5);
+                    */
+                   randomMap[x][y] = (short) Math.round(nodeValue);
+
                 }
             }
 
+            //SQUARE STEP
             for (int i = 0; i < n; i++) {
                 for (int g = 0; g < n; g++) {
+
                     //NORTH
+                    //Get average from neighbors
                     double neighborAvg = 0;
                     neighborAvg += randomMap[interval * i ][interval * g];
                     neighborAvg += randomMap[interval * i ][interval * g + interval];
-                    randomMap[interval * i ][interval * g + halfInterval] = (short) Math.round(neighborAvg/2);
+                    //Create noise
+                    double nodeValue = neighborAvg/2;
+                    nodeValue = randomNumber(nodeValue, noisePercent);
+                    //Update with noised height
+                    randomMap[interval * i ][interval * g + halfInterval] = (short) Math.round(nodeValue);
 
                     //EAST
+                    //Get average from neighbors
                     neighborAvg = 0;
                     neighborAvg += randomMap[interval * i][interval * (g+1)];
                     neighborAvg += randomMap[interval * i + interval][interval * (g+1)];
-                    randomMap[interval * i + halfInterval][interval * (g+1)] = (short) Math.round(neighborAvg/2);
+                    //Create noise
+                    nodeValue = 0;
+                    nodeValue = neighborAvg/2;
+                    nodeValue = randomNumber(nodeValue, noisePercent);
+                    //Update with noised height
+                    randomMap[interval * i + halfInterval][interval * (g+1)] = (short) Math.round(nodeValue);
 
                     //SOUTH
+                    // Get average from neighbors
                     neighborAvg = 0;
                     neighborAvg += randomMap[interval * (i+1)][interval * g];
                     neighborAvg += randomMap[interval * (i+1)][interval * g + interval];
-                    randomMap[interval * (i+1) ][interval * g + halfInterval] = (short) Math.round(neighborAvg/2);
+                    //Create noise
+                    nodeValue = 0;
+                    nodeValue = neighborAvg/2;
+                    nodeValue = randomNumber(nodeValue, noisePercent);
+                    //Update with noised height
+                    randomMap[interval * (i+1) ][interval * g + halfInterval] = (short) Math.round(nodeValue);
 
                     //WEST
+                    //Get average from neighbors
                     neighborAvg = 0;
                     neighborAvg += randomMap[interval * i][interval * g];
                     neighborAvg += randomMap[interval * i + interval][interval * g];
-                    randomMap[interval * i + halfInterval][interval * g] = (short) Math.round(neighborAvg/2);
+                    //Create noise
+                    nodeValue = 0;
+                    nodeValue = neighborAvg/2;
+                    nodeValue = randomNumber(nodeValue, noisePercent);
+                    //Update with noised height
+                    randomMap[interval * i + halfInterval][interval * g] = (short) Math.round(nodeValue);
                 }
             }
 
-
-
-
-            //Set avg corner value (+ constant) to centerpoint
-
-
-            //SQUARE STEP
-
-            //Find midpoints between corners
-
-            //Set avg value + noise to these points
-
             //Double n-value
             n *= 2;
-
-            //Break when no more unset nodes
         }
 
-        // PRINT
-        for(short[] r : randomMap){
-            for(short s : r){
-                ////System.out.print(s + ", ");
-            }
-            //System.out.println();
-        }
-
-        //Return map
+        //Return the generated map
         return randomMap;
-
     }
-
-
 
 
 
