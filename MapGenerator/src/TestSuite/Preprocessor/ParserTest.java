@@ -63,12 +63,14 @@ public class ParserTest {
 
         short[][] altitudeMap = RandomMap.CreateRandomMap(200, 200);
 
-        int iterations = 4; //if 3, then fucked up
-        int neighbors = 5;
+        int iterations = 10;
+        int neighbors = 3;
 
-        //short[][] altitudeMap = RandomMap.blurMap(RandomMap.CreateRandomMap());
-        for(int i = 0; i < iterations; i++)
-            altitudeMap = RandomMap.blurMap(altitudeMap, neighbors);
+        //Evolve map
+        for(int i = 0; i < 3; i++) altitudeMap = RandomMap.evolveMap(altitudeMap);
+
+        //Blur map
+        for(int i = 0; i < iterations; i++) altitudeMap = RandomMap.blurMap(altitudeMap, neighbors);
 
 
 /*        try {

@@ -23,21 +23,30 @@ public class RandomMapTest {
 
     @Test
     public void testMap(){
-        short[][] matrix = new short[][]{
+        /*short[][] matrix = new short[][]{
+                {0, 0, 0},
+                {0, 10, 0},
+                {0, 0, 0}
+        };*/
+
+
+        /*short[][] matrix = new short[][]{
                 {40, 20, 40, 20, 10},
                 {10, 20, 50, 10, 10},
                 {40, 10, 400, 10, 40},
                 {10, 20, 10, 10, 10},
                 {10, 60, 40, 60, 10}
-        };
+        };*/
 
-        /*short[][] matrix = new short[][]{
-                {-10, 0, 0, 0, -10},
+        int iterations = 2;
+
+        short[][] matrix = new short[][]{
+                {0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0},
                 {0, 0, 100, 0, 0},
                 {0, 0, 0, 0, 0},
-                {-10, 0, 0, 0, -10}
-        };*/
+                {0, 0, 0, 0, 0}
+        };
 
 
         System.out.println("INITIAL RANDOM MAP: ");
@@ -50,12 +59,8 @@ public class RandomMapTest {
 
         int max = RandomMap.FindMaxHeight(matrix);
 
-
-
         //Blur the map
-        for(int i = 0; i<5; i++) {
-            matrix = RandomMap.blurMap(matrix, 1);
-        }
+        for(int i = 0; i < iterations; i++) matrix = RandomMap.blurMap(matrix, 1);
 
         //PRINT OUT THE MAP
         System.out.println();
@@ -68,7 +73,7 @@ public class RandomMapTest {
         }
 
         //Create mountain range
-        RandomMap.createMountainRange(matrix);
+        //RandomMap.createMountainRange(matrix);
 
     }
 }

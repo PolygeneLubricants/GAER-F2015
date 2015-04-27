@@ -1,5 +1,7 @@
 package RandomMapGenerator;
 
+import java.util.Random;
+
 /**
  * Created by patrikk on 30/03/2015.
  */
@@ -11,12 +13,11 @@ public class RandomMap {
         short[][] randomMap = new short[height][width];
         short initialMaxHeight = 100;
 
-        for(int i = 0; i<randomMap.length; i++){
+        for(int i = 0; i < randomMap.length; i++){
             for(int j = 0; j< randomMap[i].length; j++){
                 randomMap[i][j] = (short) ( (Math.random() - landToWaterRatio ) * initialMaxHeight );
             }
         }
-
 
         return randomMap;
     }
@@ -57,6 +58,36 @@ public class RandomMap {
     }
 
 
+    public static short[][] evolveMap(short[][] altitudeMap) {
+        short[][] evolvedMap = new short[altitudeMap.length][altitudeMap[0].length];
+
+        Random random = new Random();
+
+        //For each node in array
+        for(int row = 0; row < altitudeMap.length; row++) {
+            for (int column = 0; column < altitudeMap[row].length; column++) {
+
+                //If height not approved
+                if (random.nextFloat() > 0.98){
+                    evolvedMap[row][column] = (short)(random.nextFloat() * 100);
+
+                } else { //If height approved
+                    short orgHeight = altitudeMap[row][column];
+                    double change = Math.sqrt(Math.abs(orgHeight));
+
+                    //Randomize negative or positive
+                    if (random.nextFloat() > 0.5)
+                        change = 0 - change;
+
+                    evolvedMap[row][column] = (short) Math.round(orgHeight + change);
+                }
+            }
+        }
+
+        return evolvedMap;
+    }
+
+
     public static short[][] blurMap(short[][] altitudeMap, int maxLayer){
         short[][] blurredMap = new short[altitudeMap.length][altitudeMap[0].length];
 
@@ -64,7 +95,7 @@ public class RandomMap {
         for(int row = 0; row < altitudeMap.length; row++){
             for(int column = 0; column < altitudeMap[row].length; column++) {
 
-                float newHeight = altitudeMap[row][column]; //Updated height for node
+                double newHeight = altitudeMap[row][column]; //Updated height for node
 
                 //For each layer
                 for(int currentLayer = 1; currentLayer <= maxLayer; currentLayer++) {
@@ -124,23 +155,28 @@ public class RandomMap {
 
                     }
 
-
                     //If more than zero nodes in this layer
                     if (nodeCounter != 0) {
+                        if(row == 2 && column == 1)
+                            System.out.println("NewHeight old = " + newHeight);
                         //Add the average for this layer divided by the layer count+1
-                        newHeight += layerValue / nodeCounter / (currentLayer + 1);
+                        newHeight += layerValue / (double)(nodeCounter * (currentLayer + 1));
+
+                        if(row == 2 && column == 1)
+                            System.out.println("layerValue = " + layerValue + "; nodeCounter = " + nodeCounter + "; currentLayer = " + currentLayer + "; newHeight = "+ newHeight);
                     }
                 }
 
                 //Division for dividing with newHeight
-                float division = 1.0f;
+                double division = 1.0f;
                 for(int c = 2; c <= (maxLayer + 1); c++) division += 1.0/c;
 
                 //Divide newHeight, based on layer count
                 newHeight /= division;
 
                 //Assign new height to blurred map
-                blurredMap[row][column] = (short)Math.round(newHeight);
+                long rounded = Math.round(newHeight);
+                blurredMap[row][column] = (short)rounded;
             }
         }
 
