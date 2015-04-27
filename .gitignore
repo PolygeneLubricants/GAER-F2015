@@ -15,3 +15,5 @@ out
 /MapGenerator/testKernelRunSmall.model
 
 /MapGenerator/N52E007.model
+/MapGenerator/*.bounds
+/MapGenerator/*.model

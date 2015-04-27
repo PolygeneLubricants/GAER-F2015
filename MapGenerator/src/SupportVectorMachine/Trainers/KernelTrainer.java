@@ -4,6 +4,7 @@ import Preprocessor.Parser;
 import SupportVectorMachine.Model.AltitudeBoundPair;
 import SupportVectorMachine.Model.SupportVector;
 import SupportVectorMachine.Model.SvmNodeMatrix;
+import TestSuite.SupportVectorMachine.ModelConfig;
 import javafx.util.Pair;
 import libsvm.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -68,11 +69,11 @@ public class KernelTrainer extends BaseTrainer {
      * @param matrix map to be parsed.
      * @return a list of pairs containing the indices of the matrix which still does *not* fit.
      */
-    public Pair<Integer, Integer>[] predict(short[][] matrix, Pair<Integer, Integer>[] unsolved, int width, int height) {
+    public Pair<Integer, Integer>[] predict(short[][] matrix, Pair<Integer, Integer>[] unsolved, int width, int height, int skip) {
         ArrayList<Pair<Integer, Integer>> remainingUnsolved = new ArrayList<>();
         Parser p = new Parser();
         for(Pair<Integer, Integer> unsolvedStartIndex : unsolved) {
-            SupportVector vector = p.parseSingle(matrix, unsolvedStartIndex.getKey(), unsolvedStartIndex.getValue(), width, height);
+            SupportVector vector = p.parseSingle(matrix, unsolvedStartIndex.getKey(), unsolvedStartIndex.getValue(), width, height, skip);
             svm_node[] nodeVector = toSvmNodeArray(vector);
             if(predict(nodeVector) != 1.0)
                 remainingUnsolved.add(unsolvedStartIndex);
@@ -253,7 +254,7 @@ public class KernelTrainer extends BaseTrainer {
         }
 
         altitudeMap = p.cut(altitudeMap, 0, 0, width, height);
-        SupportVector[] vectors = p.parse(altitudeMap, 3, 3);
+        SupportVector[] vectors = p.parse(altitudeMap, ModelConfig.WIDTH, ModelConfig.HEIGHT, 0);
         KernelTrainer t = new KernelTrainer();
         try {
             t.run(vectors, outputModelName, boundsModelName);

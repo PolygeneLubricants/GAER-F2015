@@ -24,7 +24,7 @@ public class LinearTrainerTest {
                 {4, 5, 6},
                 {7, 8, 9}
         };
-        SupportVector[] result = p.parse(matrix, 1, 1);
+        SupportVector[] result = p.parse(matrix, 1, 1, 0);
         LinearTrainer t = new LinearTrainer();
         LinearNodeMatrix nodeMatrix = t.toSvmNodeMatrix(result);
         Assert.assertEquals(9, nodeMatrix.get_length());
@@ -33,7 +33,7 @@ public class LinearTrainerTest {
         Assert.assertEquals(1, nodeMatrix.get_matrix()[0][0].getIndex());
         Assert.assertEquals(1.0, nodeMatrix.get_matrix()[0][0].getValue(), 0.0);
 
-        result = p.parse(matrix, 3, 3);
+        result = p.parse(matrix, 3, 3, 0);
         nodeMatrix = t.toSvmNodeMatrix(result);
         Assert.assertEquals(1, nodeMatrix.get_length());
         Assert.assertEquals(1, nodeMatrix.get_classification().length);
@@ -66,7 +66,7 @@ public class LinearTrainerTest {
         };
         Parser p = new Parser();
 
-        SupportVector[] vectors = p.parse(matrix, 3, 3);
+        SupportVector[] vectors = p.parse(matrix, 3, 3, 0);
         LinearTrainer t = new LinearTrainer();
         t.run(vectors);
 
@@ -84,7 +84,7 @@ public class LinearTrainerTest {
                 {15, 16, 17, 18, 19, 20, 21, 122, 123, 124}
         };
 
-        LinearNodeMatrix cvMatrix = t.toSvmNodeMatrix(p.parse(predict, 3, 3));
+        LinearNodeMatrix cvMatrix = t.toSvmNodeMatrix(p.parse(predict, 3, 3, 0));
 
         double[] predictions = t.predict(cvMatrix);
         System.out.println(Arrays.toString(predictions));
@@ -115,7 +115,7 @@ public class LinearTrainerTest {
         };
         Parser p = new Parser();
 
-        SupportVector[] vectors = p.parse(matrix, 3, 3);
+        SupportVector[] vectors = p.parse(matrix, 3, 3, 0);
         LinearTrainer t = new LinearTrainer();
         try {
             t.run(vectors, "testLinearRunSmall.model");
@@ -139,7 +139,7 @@ public class LinearTrainerTest {
                 {15, 16, 17, 18, 19, 20, 21, 22, 23, 24}
         };
 
-        SupportVector[] cvVectors = p.parse(predict, 3, 3);
+        SupportVector[] cvVectors = p.parse(predict, 3, 3, 0);
     }
 
     @Test
@@ -152,7 +152,7 @@ public class LinearTrainerTest {
             e.printStackTrace();
         }
 
-        SupportVector[] vectors = p.parse(altitudeMap, 10, 10);
+        SupportVector[] vectors = p.parse(altitudeMap, 10, 10, 0);
         LinearTrainer t = new LinearTrainer();
         try {
             t.run(vectors, "testLinearRunBig.model");
@@ -178,7 +178,7 @@ public class LinearTrainerTest {
         };
         Parser p = new Parser();
 
-        SupportVector[] vectors = p.parse(matrix, 3, 3);
+        SupportVector[] vectors = p.parse(matrix, 3, 3, 0);
         LinearTrainer t = new LinearTrainer();
         t.run(vectors);
 
