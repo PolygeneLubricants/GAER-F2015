@@ -2,8 +2,10 @@ package GUI;
 
 import Preprocessor.Parser;
 import RandomMapGenerator.RandomMap;
+import SupportVectorMachine.Model.AltitudeBoundPair;
 import SupportVectorMachine.Model.SupportVector;
 import SupportVectorMachine.Trainers.KernelTrainer;
+import javafx.util.Pair;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,12 +23,16 @@ public class MainView {
     PixelMap _realMap;
     KernelTrainer _trainer;
     Label _predicted;
+    Pair<Integer, Integer>[] _remainingPairs;
 
     Panel mapPanel;
     Panel controlPanel;
+    private static String mapFile = "N47E007";
+    private static String mapPath = "./data/raw/N47/N47E007.hgt";
 
     public MainView() {
         _trainer = new KernelTrainer();
+        loadModel();
         _frame = new JFrame("MapGenerator");
         _frame.setLayout(new BorderLayout());
         mapPanel = new Panel();
@@ -49,26 +55,22 @@ public class MainView {
 
     private void loadModel() {
         try {
-            _trainer.loadModel("N52E007.model");
+            _trainer.loadModel(mapFile + ".model", mapFile + ".bounds");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void classify() {
-        loadModel();
-        Parser p = new Parser();
+        _predicted.setText("");
 
-        SupportVector[] randomVectors = p.parse(_randomMap.getMap(), 3, 3);
-        double[] predictions = _trainer.predict(_trainer.toSvmNodeMatrix(randomVectors));
-        int correct = 0;
-        for(int i = 0; i < predictions.length; i++) {
-            if(predictions[i] == 1) {
-                correct++;
-            }
+        if(_remainingPairs == null) {
+            _remainingPairs = RandomMap.toIndexPairs(_randomMap.getMap());
         }
 
-        _predicted.setText(correct + " out of " + predictions.length + " predicted.");
+        _remainingPairs = _trainer.predict(_randomMap.getMap(), _remainingPairs, 3, 3);
+        int total = _randomMap.getMap().length * _randomMap.getMap()[0].length;
+        _predicted.setText(total - _remainingPairs.length + " out of " + total + " predicted.");
     }
 
     private void setupControls() {
@@ -83,27 +85,55 @@ public class MainView {
         });
 
         // STEP
-        Button stepButton = new Button("Step");
+        Button stepButton = new Button("Blur");
         stepButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // STEP
+                short[][] blurredRandomMap = RandomMap.blurMap(_randomMap.getMap(), 2);
+                setRandomMap(blurredRandomMap); // TODO: Change to actual step
             }
         });
 
+        Button rngButton = new Button("RNG");
+        rngButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                short[][] randomMap = _randomMap.getMap();
+                // STEP
+                for(Pair<Integer, Integer> p : _remainingPairs) {
+                    randomMap = RandomMap.CreateNewRandomVector(randomMap, p.getValue(), p.getKey(), 3, 3, _trainer.GetAltitudeBoundPair());
+                }
+
+                setRandomMap(randomMap);
+                classify();
+            }
+        });
 
         // RUN
         Button runButton = new Button("Run");
         runButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // RUN
+                classify();
+                int oldLength = _remainingPairs.length;
+                do {
+                    short[][] randomMap = _randomMap.getMap();
+                    // RUN
+                    for(Pair<Integer, Integer> p : _remainingPairs) {
+                        randomMap = RandomMap.CreateNewRandomVector(randomMap, p.getValue(), p.getKey(), 3, 3, _trainer.GetAltitudeBoundPair());
+                    }
+
+                    setRandomMap(randomMap);
+                    classify();
+                } while(oldLength == _remainingPairs.length);
             }
         });
 
         controlPanel.add(title);
         controlPanel.add(predictButton);
         controlPanel.add(stepButton);
+        controlPanel.add(rngButton);
         controlPanel.add(runButton);
     }
 
@@ -118,7 +148,7 @@ public class MainView {
     }
 
     private void setupRandomGroup() {
-        setRandomMap(100, 100);
+        generateRandomMap(100, 100, _trainer.GetAltitudeBoundPair().getMin(), _trainer.GetAltitudeBoundPair().getMax());
         Panel randomGroup = new Panel();
         randomGroup.setLayout(new BorderLayout());
         Label name = new Label("Random map");
@@ -129,7 +159,7 @@ public class MainView {
     }
 
     private void setupRealGroup() {
-        setRealMap("./data/raw/N32/N52E007.hgt", 0, 0, 100, 100);
+        setRealMap(mapPath, 0, 0, 200, 200);
         Panel realGroup = new Panel();
         realGroup.setLayout(new BorderLayout());
         Label name = new Label("Real map");
@@ -139,10 +169,13 @@ public class MainView {
         mapPanel.add(realGroup, BorderLayout.EAST);
     }
 
-    public void setRandomMap(int width, int height) {
-        short[][] randomMap = RandomMap.CreateRandomMap(width, height);
+    public void generateRandomMap(int width, int height, short min, short max) {
+        setRandomMap(RandomMap.CreateRandomMap(width, height, min, max));
+    }
+
+    public void setRandomMap(short[][] randomMap) {
         if(_randomMap == null) {
-            _randomMap = createMap(randomMap);
+            _randomMap = createMap(randomMap, _trainer.GetAltitudeBoundPair());
         }
         else {
             _randomMap.fillCanvas(randomMap);
@@ -160,15 +193,15 @@ public class MainView {
         }
 
         if(_realMap == null) {
-            _realMap = createMap(realMap);
+            _realMap = createMap(realMap, _trainer.GetAltitudeBoundPair());
         }
         else {
             _realMap.fillCanvas(realMap);
         }
     }
 
-    private PixelMap createMap(short[][] map) {
-        PixelMap panel = new PixelMap(map);
+    private PixelMap createMap(short[][] map, AltitudeBoundPair bounds) {
+        PixelMap panel = new PixelMap(map, bounds);
         return panel;
     }
 }

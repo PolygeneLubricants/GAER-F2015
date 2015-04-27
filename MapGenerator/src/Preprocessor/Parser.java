@@ -26,7 +26,7 @@ public class Parser {
         bb.flip();
 
         // Choose the right endianness
-        ShortBuffer sb = bb.order(ByteOrder.LITTLE_ENDIAN).asShortBuffer();
+        ShortBuffer sb = bb.order(ByteOrder.BIG_ENDIAN).asShortBuffer();
         short[][] matrix = new short[1201][];
         int rowNumber = 0;
         while (sb.remaining() > 0) {
@@ -48,7 +48,6 @@ public class Parser {
             cutMatrix[i] = new short[width];
             for(int j = 0; j < width; j++) {
                 cutMatrix[i][j] = matrix[i + fromRow][j + fromCol];
-                cutMatrix[i][j] = matrix[i][j];
             }
         }
 
@@ -96,5 +95,18 @@ public class Parser {
         }
 
         return vector;
+    }
+
+    public SupportVector parseSingle(short[][] matrix, int fromCol, int fromRow, int width, int height) {
+        if(fromCol + width > matrix[0].length) {
+            fromCol = matrix[0].length - width;
+        }
+
+        if(fromRow + height > matrix.length) {
+            fromRow = matrix.length - height;
+        }
+
+        short[][] shortMatrix = cut(matrix, fromCol, fromRow, width, height);
+        return parse(shortMatrix, width, height)[0];
     }
 }

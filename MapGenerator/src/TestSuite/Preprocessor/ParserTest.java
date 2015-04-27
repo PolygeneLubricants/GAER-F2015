@@ -61,7 +61,7 @@ public class ParserTest {
     public void testVisualIdentification() {
         Parser p = new Parser();
 
-        short[][] altitudeMap = RandomMap.CreateRandomMap(200, 200);
+        short[][] altitudeMap = RandomMap.CreateRandomMap(200, 200, Short.MIN_VALUE, Short.MAX_VALUE);
 
         int iterations = 10;
         int neighbors = 3;
@@ -72,12 +72,11 @@ public class ParserTest {
         //Blur map
         for(int i = 0; i < iterations; i++) altitudeMap = RandomMap.blurMap(altitudeMap, neighbors);
 
-
-/*        try {
-            //altitudeMap = p.read("./data/raw/N32/N52E007.hgt");
+        try {
+            altitudeMap = p.read("./data/raw/N32/N52E007.hgt");
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
 
         JFrame frame = new JFrame("Visual verification of SRTM maps");
 

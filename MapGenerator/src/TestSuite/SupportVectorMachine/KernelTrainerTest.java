@@ -61,11 +61,11 @@ public class KernelTrainerTest {
             e.printStackTrace();
         }
 
-        altitudeMap = p.cut(altitudeMap, 0, 0, 100, 100);
+        altitudeMap = p.cut(altitudeMap, 0, 0, 200, 200);
         SupportVector[] vectors = p.parse(altitudeMap, 3, 3);
         KernelTrainer t = new KernelTrainer();
         try {
-            t.run(vectors, "testKernelRunFragment.model");
+            t.run(vectors, "testKernelRunFragment.model", "testKernelRunFragment.bounds");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -77,7 +77,7 @@ public class KernelTrainerTest {
             e.printStackTrace();
         }
 
-        testMap = p.cut(testMap, 50, 50, 50, 50);
+        testMap = p.cut(testMap, 200, 200, 50, 50);
         vectors = p.parse(testMap, 3, 3);
         double[] predictions = t.predict(t.toSvmNodeMatrix(vectors));
 
@@ -89,7 +89,7 @@ public class KernelTrainerTest {
 
         System.out.print("Prediction Accuracy = " + 100.0 * totalCorrect / predictions.length + "%\n");
 
-        //t.crossValidate();
+        t.crossValidate();
     }
 
     @Test
@@ -113,7 +113,7 @@ public class KernelTrainerTest {
         SupportVector[] vectors = p.parse(matrix, 3, 3);
         KernelTrainer t = new KernelTrainer();
         try {
-            t.run(vectors, "testKernelRunSmall.model");
+            t.run(vectors, "testKernelRunSmall.model", "testKernelRunSmall.bounds");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -159,7 +159,7 @@ public class KernelTrainerTest {
         SupportVector[] vectors = p.parse(altitudeMap, 10, 10);
         KernelTrainer t = new KernelTrainer();
         try {
-            t.run(vectors, "testKernelRunBig.model");
+            t.run(vectors, "testKernelRunBig.model", "testKernelRunBig.bounds");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -252,12 +252,12 @@ public class KernelTrainerTest {
         KernelTrainer t = new KernelTrainer();
         Parser p = new Parser();
         try {
-            t.loadModel("N52E007.model");
+            t.loadModel("N52E007.model", "N52E007.bounds");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        short[][] randomMap = RandomMap.CreateRandomMap(100, 100);
+        short[][] randomMap = RandomMap.CreateRandomMap(100, 100, t.GetAltitudeBoundPair().getMin(), t.GetAltitudeBoundPair().getMax());
         SupportVector[] randomVectors = p.parse(randomMap, 3, 3);
         double[] predictions = t.predict(t.toSvmNodeMatrix(randomVectors));
         int correct = 0;

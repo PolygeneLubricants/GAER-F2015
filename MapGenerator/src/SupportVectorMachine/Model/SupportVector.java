@@ -71,4 +71,17 @@ public class SupportVector {
     public int getLength() {
         return _vector.length;
     }
+
+    public AltitudeBoundPair GetAltitudeBounds() {
+        AltitudeBoundPair abp = new AltitudeBoundPair();
+        for(short v : _vector) {
+            if(v > abp.getMax())
+                abp.setMax(v);
+            else if(v < abp.getMin())
+                abp.setMin(v);
+
+        }
+
+        return abp;
+    }
 }

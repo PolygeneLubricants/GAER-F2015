@@ -1,6 +1,7 @@
 package GUI;
 
 import RandomMapGenerator.RandomMap;
+import SupportVectorMachine.Model.AltitudeBoundPair;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,8 +14,17 @@ import java.awt.image.BufferedImage;
 public class PixelMap extends JPanel {
     private BufferedImage canvas;
     private short[][] map;
+    private AltitudeBoundPair bounds;
+
+    public PixelMap(short[][] altitudeMap, AltitudeBoundPair b) {
+        map = altitudeMap;
+        bounds = b;
+        canvas = new BufferedImage(altitudeMap[0].length, altitudeMap.length, BufferedImage.TYPE_INT_RGB);
+        fillCanvas(altitudeMap);
+    }
 
     public PixelMap(short[][] altitudeMap) {
+        bounds = new AltitudeBoundPair((short)5000, (short) -5000);
         map = altitudeMap;
         canvas = new BufferedImage(altitudeMap[0].length, altitudeMap.length, BufferedImage.TYPE_INT_RGB);
         fillCanvas(altitudeMap);
@@ -32,28 +42,19 @@ public class PixelMap extends JPanel {
 
 
     public void fillCanvas(short[][] altitudeMap) {
-        int maxHeight = RandomMap.FindMaxHeight(altitudeMap);
-        int maxLow = RandomMap.FindMaxLow(altitudeMap);
+        map = altitudeMap;
+        int max = bounds.getMax(); // Max altitude in the data set.
+        int min = bounds.getMin(); // Min altitude in the data set
 
-        System.out.println("FINAL MAX HEIGHT: " + maxHeight);
-        for(int row = 0; row < canvas.getHeight(); row++) {
-            for(int col = 0; col < canvas.getWidth(); col++) {
-                int green = altitudeMap[row][col] > 0 ? (altitudeMap[row][col] * 255 / maxHeight) : 0;
-                int blue = altitudeMap[row][col] < 0 ? (((altitudeMap[row][col] * -1) * 255) / maxLow) : 0;
-
-                if(green < 0 || green > 256) {
-                    throw new RuntimeException("Green must be between 0 and 255. Green: " + green);
-                }
-
-                if(blue < 0 || blue > 256) {
-                    throw new RuntimeException("Blue must be between 0 and 255. Blue: " + blue);
-                }
+        for (int x = 0; x < canvas.getWidth(); x++) {
+            for (int y = 0; y < canvas.getHeight(); y++) {
+                int green = altitudeMap[x][y] > 0 ? (altitudeMap[x][y] * 255 / max) : 0;
+                int blue = altitudeMap[x][y] < 0 ? ((altitudeMap[x][y] * 255) / min) : 0;
 
                 Color c = new Color(0, green, blue);
-                canvas.setRGB(col, row, c.getRGB());
+                canvas.setRGB(x, y, c.getRGB());
             }
         }
-
         repaint();
     }
 
