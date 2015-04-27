@@ -2,6 +2,7 @@ package TestSuite.Preprocessor;
 
 import GUI.PixelMap;
 import Preprocessor.Parser;
+import SupportVectorMachine.Model.AltitudeBoundPair;
 import SupportVectorMachine.Model.SupportVector;
 import RandomMapGenerator.RandomMap;
 import org.junit.Assert;
@@ -61,26 +62,31 @@ public class ParserTest {
     public void testVisualIdentification() {
         Parser p = new Parser();
 
-        short[][] altitudeMap = RandomMap.CreateRandomMap(200, 200, Short.MIN_VALUE, Short.MAX_VALUE);
+        //short[][] altitudeMap = RandomMap.CreateRandomMap(200, 200, Short.MIN_VALUE, Short.MAX_VALUE);
+        AltitudeBoundPair bounds = new AltitudeBoundPair((short)100, (short)0);
+        short[][] randMap = RandomMap.CreateRandomMap(257, 257, bounds.getMin(), bounds.getMax());
+        short[][] altitudeMap = RandomMap.createDiamondSquareMap(randMap, bounds.getMin(), bounds.getMax());
 
-        int iterations = 10;
+
+        int iterations = 1;
         int neighbors = 3;
 
         //Evolve map
-        for(int i = 0; i < 3; i++) altitudeMap = RandomMap.evolveMap(altitudeMap);
+        //for(int i = 0; i < 3; i++) altitudeMap = RandomMap.evolveMap(altitudeMap);
 
         //Blur map
-        for(int i = 0; i < iterations; i++) altitudeMap = RandomMap.blurMap(altitudeMap, neighbors);
-
-        try {
+        for(int i = 0; i < iterations; i++) {
+            altitudeMap = RandomMap.blurMap(altitudeMap, neighbors);
+        }
+        /*try {
             altitudeMap = p.read("./data/raw/N32/N52E007.hgt");
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
 
         JFrame frame = new JFrame("Visual verification of SRTM maps");
 
-        PixelMap panel = new PixelMap(altitudeMap);
+        PixelMap panel = new PixelMap(altitudeMap, bounds);
 
         frame.add(panel);
         frame.pack();

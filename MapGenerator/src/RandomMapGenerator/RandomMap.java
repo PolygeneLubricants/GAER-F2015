@@ -2,6 +2,7 @@ package RandomMapGenerator;
 
 import SupportVectorMachine.Model.AltitudeBoundPair;
 import javafx.util.Pair;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -23,6 +24,125 @@ public class RandomMap {
         return arr;
     }
 
+
+    @Test
+    public static short[][] createDiamondSquareMap(short[][] randomMap, short min, short max){
+
+        //INITIALISATION
+        Random random = new Random();
+
+        int row = randomMap.length;
+        int col = randomMap[0].length;
+
+        /*
+        //Set random corner values
+        //North-West
+        randomMap[0][0] = 0; // (short)(random.nextInt(max - min) + min);
+        ////System.out.println("[0][0]: " + randomMap[0][0]);
+
+        //North-East
+        randomMap[0][col-1] = 10; // (short)(random.nextInt(max - min) + min);
+        ////System.out.println("[0][col-1]: " + randomMap[0][col-1]);
+
+        //South-East
+        randomMap[row-1][col-1] = 0;// (short)(random.nextInt(max - min) + min);
+        ////System.out.println("[row][0]: " + randomMap[row-1][col-1]);
+
+        //South-West
+        randomMap[row-1][0] = 10; //(short)(random.nextInt(max - min) + min);
+        ////System.out.println("[row-1][0]: " + randomMap[row-1][0]);
+        */
+
+        int n = 1;
+        //int interval = (col-1)/2;
+
+        //GOES INTO THE LOOP!
+        for(int interval = col-1; interval >= 2; interval /= 2) {
+            //System.out.println("interval: " + interval);
+            int halfInterval = interval / 2;
+
+            //DIAMOND STEP
+            //Find centerpoints
+            for (int i = 0; i < n; i++) {
+                for (int g = 0; g < n; g++) {
+
+                    int x = interval * i + halfInterval;
+                    int y = interval * g + halfInterval;
+
+                    double cornerAvg = 0;
+                    cornerAvg += randomMap[x - halfInterval][y - halfInterval];
+                    cornerAvg += randomMap[x + halfInterval][y - halfInterval];
+                    cornerAvg += randomMap[x - halfInterval][y + halfInterval];
+                    cornerAvg += randomMap[x + halfInterval][y + halfInterval];
+
+                    randomMap[x][y] = (short) Math.round(cornerAvg / 4);
+                    //System.out.println("[" + x + "][" + y + "]: " + randomMap[x][y]);
+                }
+            }
+
+            for (int i = 0; i < n; i++) {
+                for (int g = 0; g < n; g++) {
+                    //NORTH
+                    double neighborAvg = 0;
+                    neighborAvg += randomMap[interval * i ][interval * g];
+                    neighborAvg += randomMap[interval * i ][interval * g + interval];
+                    randomMap[interval * i ][interval * g + halfInterval] = (short) Math.round(neighborAvg/2);
+
+                    //EAST
+                    neighborAvg = 0;
+                    neighborAvg += randomMap[interval * i][interval * (g+1)];
+                    neighborAvg += randomMap[interval * i + interval][interval * (g+1)];
+                    randomMap[interval * i + halfInterval][interval * (g+1)] = (short) Math.round(neighborAvg/2);
+
+                    //SOUTH
+                    neighborAvg = 0;
+                    neighborAvg += randomMap[interval * (i+1)][interval * g];
+                    neighborAvg += randomMap[interval * (i+1)][interval * g + interval];
+                    randomMap[interval * (i+1) ][interval * g + halfInterval] = (short) Math.round(neighborAvg/2);
+
+                    //WEST
+                    neighborAvg = 0;
+                    neighborAvg += randomMap[interval * i][interval * g];
+                    neighborAvg += randomMap[interval * i + interval][interval * g];
+                    randomMap[interval * i + halfInterval][interval * g] = (short) Math.round(neighborAvg/2);
+                }
+            }
+
+
+
+
+            //Set avg corner value (+ constant) to centerpoint
+
+
+            //SQUARE STEP
+
+            //Find midpoints between corners
+
+            //Set avg value + noise to these points
+
+            //Double n-value
+            n *= 2;
+
+            //Break when no more unset nodes
+        }
+
+        // PRINT
+        for(short[] r : randomMap){
+            for(short s : r){
+                ////System.out.print(s + ", ");
+            }
+            //System.out.println();
+        }
+
+        //Return map
+        return randomMap;
+
+    }
+
+
+
+
+
     public static short[][] CreateRandomMap(int width, int height, short min, short max){
         Random random = new Random();
         short[][] randomMap = new short[height][width];
@@ -43,7 +163,7 @@ public class RandomMap {
             for(int j = 0; j < altitudeMap[i].length; j++)
                 if(altitudeMap[i][j] > maxHeight) {
                     maxHeight = altitudeMap[i][j];
-                    //System.out.println("New maxHeight: " + maxHeight);
+                    //////System.out.println("New maxHeight: " + maxHeight);
                 }
 
         return maxHeight;
@@ -56,7 +176,7 @@ public class RandomMap {
             for(int j = 0; j < altitudeMap[i].length; j++)
                 if(altitudeMap[i][j] < maxLow) {
                     maxLow = altitudeMap[i][j];
-                    //System.out.println("New maxLow: " + maxLow);
+                    //////System.out.println("New maxLow: " + maxLow);
                 }
         maxLow = (short) Math.abs(maxLow);
 
@@ -177,13 +297,8 @@ public class RandomMap {
 
                     //If more than zero nodes in this layer
                     if (nodeCounter != 0) {
-                        if(row == 2 && column == 1)
-                            System.out.println("NewHeight old = " + newHeight);
                         //Add the average for this layer divided by the layer count+1
                         newHeight += layerValue / (double)(nodeCounter * (currentLayer + 1));
-
-                        if(row == 2 && column == 1)
-                            System.out.println("layerValue = " + layerValue + "; nodeCounter = " + nodeCounter + "; currentLayer = " + currentLayer + "; newHeight = "+ newHeight);
                     }
                 }
 
@@ -211,7 +326,7 @@ public class RandomMap {
 
         //FIND MAX HEIGHT
         short maxHeight = FindMaxHeight(altitudeMap);
-        System.out.println("maxH: " + maxHeight);
+        ////System.out.println("maxH: " + maxHeight);
 
         int randomRow = 0;
         int randomCol = 0;
@@ -224,7 +339,7 @@ public class RandomMap {
 
             //If node is more than 80% of maxHeight, then break
             if(altitudeMap[randomRow][randomCol] >= maxHeight * 0.8){
-                System.out.println("i er " + i);
+                ////System.out.println("i er " + i);
                 break;
             }else
                 if(i == 10){
@@ -235,12 +350,12 @@ public class RandomMap {
         }
 
 
-        System.out.print("[" + randomRow + "][" + randomCol + "] = " + altitudeMap[randomRow][randomCol] + " --> ");
+        ////System.out.print("[" + randomRow + "][" + randomCol + "] = " + altitudeMap[randomRow][randomCol] + " --> ");
 
         //Grow the node (and neighbors?)
         altitudeMap[randomRow][randomCol] += Math.sqrt(altitudeMap[randomRow][randomCol]);
 
-        System.out.println(altitudeMap[randomRow][randomCol]);
+        ////System.out.println(altitudeMap[randomRow][randomCol]);
 
 
         //For each layer, the neighboring nodes should be lifted
@@ -288,13 +403,13 @@ public class RandomMap {
         }
 
         //PRINT OUT ALTERED MAP
-        System.out.println();
-        System.out.println("HEIGHT ALTERED MAP: ");
+        ////System.out.println();
+        ////System.out.println("HEIGHT ALTERED MAP: ");
         for(short[] index : altitudeMap){
             for(short s : index){
-                System.out.print(s + " ");
+                //System.out.print(s + " ");
             }
-            System.out.println();
+            //System.out.println();
         }
         //return alteredMap;
         return altitudeMap;
