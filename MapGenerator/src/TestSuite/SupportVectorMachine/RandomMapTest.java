@@ -2,6 +2,7 @@ package TestSuite.SupportVectorMachine;
 
 import Preprocessor.Parser;
 import RandomMapGenerator.RandomMap;
+import SupportVectorMachine.Model.AltitudeBoundPair;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -41,11 +42,11 @@ public class RandomMapTest {
         int iterations = 2;
 
         short[][] matrix = new short[][]{
+                {100, 0, 0, 0, 100},
                 {0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0},
-                {0, 0, 100, 0, 0},
                 {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
+                {100, 0, 0, 0, 100}
         };
 
 
@@ -57,10 +58,25 @@ public class RandomMapTest {
             System.out.println();
         }
 
-        int max = RandomMap.FindMaxHeight(matrix);
+        //int max = RandomMap.FindMaxHeight(matrix);
 
         //Blur the map
-        for(int i = 0; i < iterations; i++) matrix = RandomMap.blurMap(matrix, 1);
+        //for(int i = 0; i < iterations; i++) matrix = RandomMap.blurMap(matrix, 1);
+
+
+
+        AltitudeBoundPair bounds = new AltitudeBoundPair((short)0, (short)30);
+        //short[][] randMap = RandomMap.CreateRandomMap(257, 257, bounds.getMin(), bounds.getMax());
+
+        /* Create noise percent and subtract them from the max value
+            so maxxed out values won't exceed the max value
+         */
+        int noisePercent = 10;
+        int min = bounds.getMin();
+        int max = bounds.getMax() - bounds.getMax()*noisePercent/100;
+
+        short[][] altitudeMap = RandomMap.createDiamondSquareMap(matrix, 10, bounds);
+
 
         //PRINT OUT THE MAP
         System.out.println();

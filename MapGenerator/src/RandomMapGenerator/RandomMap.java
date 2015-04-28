@@ -45,8 +45,19 @@ public class RandomMap {
         }
     }
 
+    public static short checkBounds(short height, AltitudeBoundPair bounds){
 
-    public static short[][] createDiamondSquareMap(short[][] randomMap, int noisePercent){
+        //Check if bounds are exceeded
+        if(height > bounds.getMax())
+            height = bounds.getMax();
+        else if(height < bounds.getMin())
+            height = bounds.getMin();
+
+        return height;
+    }
+
+
+    public static short[][] createDiamondSquareMap(short[][] randomMap, int noisePercent, AltitudeBoundPair bounds){
 
         //INITIALISATION
         int n = 1;
@@ -73,16 +84,14 @@ public class RandomMap {
                     double nodeValue = cornerAvg / 4;
                     nodeValue = randomNumber(nodeValue, noisePercent);
 
-                    //CONSTANT: Make a positive or negative constant
-                    //Still has bugs, as the max height can be exceeded
-                    /*
+                    //CENTER CONSTANT: Make a positive or negative constant
                     if(n == 1)
                         if(Math.random() >0.5)
                             nodeValue += Math.sqrt(nodeValue*5);
                         else
                             nodeValue -= Math.sqrt(nodeValue*5);
-                    */
-                   randomMap[x][y] = (short) Math.round(nodeValue);
+
+                    randomMap[x][y] = checkBounds((short) Math.round(nodeValue), bounds);
 
                 }
             }
@@ -100,7 +109,7 @@ public class RandomMap {
                     double nodeValue = neighborAvg/2;
                     nodeValue = randomNumber(nodeValue, noisePercent);
                     //Update with noised height
-                    randomMap[interval * i ][interval * g + halfInterval] = (short) Math.round(nodeValue);
+                    randomMap[interval * i ][interval * g + halfInterval] = checkBounds((short) Math.round(nodeValue), bounds);
 
                     //EAST
                     //Get average from neighbors
@@ -112,7 +121,7 @@ public class RandomMap {
                     nodeValue = neighborAvg/2;
                     nodeValue = randomNumber(nodeValue, noisePercent);
                     //Update with noised height
-                    randomMap[interval * i + halfInterval][interval * (g+1)] = (short) Math.round(nodeValue);
+                    randomMap[interval * i + halfInterval][interval * (g+1)] = checkBounds((short) Math.round(nodeValue), bounds);
 
                     //SOUTH
                     // Get average from neighbors
@@ -124,7 +133,7 @@ public class RandomMap {
                     nodeValue = neighborAvg/2;
                     nodeValue = randomNumber(nodeValue, noisePercent);
                     //Update with noised height
-                    randomMap[interval * (i+1) ][interval * g + halfInterval] = (short) Math.round(nodeValue);
+                    randomMap[interval * (i+1) ][interval * g + halfInterval] = checkBounds((short) Math.round(nodeValue), bounds);
 
                     //WEST
                     //Get average from neighbors
@@ -136,7 +145,7 @@ public class RandomMap {
                     nodeValue = neighborAvg/2;
                     nodeValue = randomNumber(nodeValue, noisePercent);
                     //Update with noised height
-                    randomMap[interval * i + halfInterval][interval * g] = (short) Math.round(nodeValue);
+                    randomMap[interval * i + halfInterval][interval * g] = checkBounds((short) Math.round(nodeValue), bounds);
                 }
             }
 
@@ -205,7 +214,7 @@ public class RandomMap {
         return map;
     }
 
-    public static short[][] evolveMap(short[][] altitudeMap) {
+    public static short[][] evolveMap(short[][] altitudeMap, AltitudeBoundPair bounds) {
         short[][] evolvedMap = new short[altitudeMap.length][altitudeMap[0].length];
 
         Random random = new Random();
@@ -228,6 +237,12 @@ public class RandomMap {
 
                     evolvedMap[row][column] = (short) Math.round(orgHeight + change);
                 }
+
+                //Check if bounds are exceeded
+                if(evolvedMap[row][column] > bounds.getMax())
+                    evolvedMap[row][column] = bounds.getMax();
+                else if(evolvedMap[row][column] < bounds.getMin())
+                    evolvedMap[row][column] = bounds.getMin();
             }
         }
 
