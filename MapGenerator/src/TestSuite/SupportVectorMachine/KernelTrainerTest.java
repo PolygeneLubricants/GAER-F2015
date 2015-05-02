@@ -61,8 +61,8 @@ public class KernelTrainerTest {
             e.printStackTrace();
         }
 
-        altitudeMap = p.cut(altitudeMap, 0, 0, 200, 200);
-        SupportVector[] vectors = p.parse(altitudeMap, 3, 3, 0);
+        altitudeMap = p.cut(altitudeMap, 0, 0, 100, 100);
+        SupportVector[] vectors = p.parse(altitudeMap, 5, 5, 0);
         KernelTrainer t = new KernelTrainer();
         try {
             t.run(vectors, "testKernelRunFragment.model", "testKernelRunFragment.bounds");
@@ -77,8 +77,8 @@ public class KernelTrainerTest {
             e.printStackTrace();
         }
 
-        testMap = p.cut(testMap, 200, 200, 50, 50);
-        vectors = p.parse(testMap, 3, 3, 0);
+        testMap = p.cut(testMap, 0, 0, 100, 100);
+        vectors = p.parse(testMap, 5, 5, 0);
         double[] predictions = t.predict(t.toSvmNodeMatrix(vectors));
 
         svm_problem problem = t.getProblem();

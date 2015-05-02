@@ -96,15 +96,20 @@ public class MainView {
             }
         });
 
-        Button rngButton = new Button("RNG");
-        rngButton.addActionListener(new ActionListener() {
+        Button diamondSquareButton = new Button("Diamond Square");
+        diamondSquareButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 short[][] randomMap = _randomMap.getMap();
                 // STEP
+
                 for(Pair<Integer, Integer> p : _remainingPairs) {
-                    randomMap = RandomMap.CreateNewRandomVector(randomMap, p.getValue(), p.getKey(), ModelConfig.WIDTH, ModelConfig.HEIGHT, _trainer.GetAltitudeBoundPair());
+                    randomMap = RandomMap.CreateNewDiamondSquareVector(randomMap, p.getValue(), p.getKey(), ModelConfig.HEIGHT, ModelConfig.WIDTH, _trainer.GetAltitudeBoundPair());
                 }
+
+                /*
+                randomMap = RandomMap.createDiamondSquareMap(randomMap, 10, _trainer.GetAltitudeBoundPair());
+                */
 
                 setRandomMap(randomMap);
                 classify();
@@ -116,25 +121,34 @@ public class MainView {
         runButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                classify();
-                int oldLength = _remainingPairs.length;
-                do {
-                    short[][] randomMap = _randomMap.getMap();
-                    // RUN
-                    for(Pair<Integer, Integer> p : _remainingPairs) {
-                        randomMap = RandomMap.CreateNewRandomVector(randomMap, p.getValue(), p.getKey(), ModelConfig.WIDTH, ModelConfig.HEIGHT, _trainer.GetAltitudeBoundPair());
-                    }
 
-                    setRandomMap(randomMap);
+                // We invoke this action in another thread, to maintain gui updates (progress on map).
+                Thread t = new Thread(() -> {
                     classify();
-                } while(oldLength == _remainingPairs.length);
+                    int total = _randomMap.getMap().length * _randomMap.getMap()[0].length;
+                    int iteration = 0;
+                    do {
+                        iteration++;
+                        short[][] randomMap = _randomMap.getMap();
+                        // STEP
+                        // Square, blur, blur
+                        for(Pair<Integer, Integer> p : _remainingPairs) {
+                            randomMap = RandomMap.CreateNewBluredDiamondSquareVector(randomMap, p.getValue(), p.getKey(), ModelConfig.HEIGHT, ModelConfig.WIDTH, _trainer.GetAltitudeBoundPair());
+                        }
+
+                        setRandomMap(randomMap);
+                        classify();
+                        System.out.println("Predictions: " + (total - _remainingPairs.length)+  ". Iteration: " + iteration);
+                    } while(_remainingPairs.length > 100);
+                });
+                t.start();
             }
         });
 
         controlPanel.add(title);
         controlPanel.add(predictButton);
         controlPanel.add(stepButton);
-        controlPanel.add(rngButton);
+        controlPanel.add(diamondSquareButton);
         controlPanel.add(runButton);
     }
 

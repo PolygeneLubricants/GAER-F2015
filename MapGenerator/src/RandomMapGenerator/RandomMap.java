@@ -1,5 +1,6 @@
 package RandomMapGenerator;
 
+import Preprocessor.Parser;
 import SupportVectorMachine.Model.AltitudeBoundPair;
 import javafx.util.Pair;
 import org.junit.Test;
@@ -197,6 +198,42 @@ public class RandomMap {
         maxLow = (short) Math.abs(maxLow);
 
         return maxLow;
+    }
+
+    public static short[][] CreateNewDiamondSquareVector(short[][] map, int fromRow, int fromCol, int height, int width, AltitudeBoundPair bounds) {
+        // If the new vector is on the edge, we ignore it, as it has been modified previously.
+        if(fromRow + height > map.length || fromCol + width > map[0].length)
+            return map;
+
+        Parser p = new Parser();
+        short[][] smallMap = p.cut(map, fromCol, fromRow, width, height);
+        short[][] randomVector = RandomMap.createDiamondSquareMap(smallMap, 10, bounds);
+        for(int i = 0; i < height; i++) {
+            for(int j = 0; j < width; j++) {
+                map[i + fromRow][j + fromCol] = randomVector[i][j];
+            }
+        }
+
+        return map;
+    }
+
+    public static short[][] CreateNewBluredDiamondSquareVector(short[][] map, int fromRow, int fromCol, int height, int width, AltitudeBoundPair bounds) {
+        // If the new vector is on the edge, we ignore it, as it has been modified previously.
+        if(fromRow + height > map.length || fromCol + width > map[0].length)
+            return map;
+
+        Parser p = new Parser();
+        short[][] smallMap = p.cut(map, fromCol, fromRow, width, height);
+        short[][] randomVector = RandomMap.createDiamondSquareMap(smallMap, 10, bounds);
+        randomVector = RandomMap.blurMap(randomVector, 2);
+        randomVector = RandomMap.blurMap(randomVector, 2);
+        for(int i = 0; i < height; i++) {
+            for(int j = 0; j < width; j++) {
+                map[i + fromRow][j + fromCol] = randomVector[i][j];
+            }
+        }
+
+        return map;
     }
 
     public static short[][] CreateNewRandomVector(short[][] map, int fromRow, int fromCol, int height, int width, AltitudeBoundPair bounds) {

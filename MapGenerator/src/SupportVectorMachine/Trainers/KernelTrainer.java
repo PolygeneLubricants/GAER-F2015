@@ -254,7 +254,7 @@ public class KernelTrainer extends BaseTrainer {
         }
 
         altitudeMap = p.cut(altitudeMap, 0, 0, width, height);
-        SupportVector[] vectors = p.parse(altitudeMap, ModelConfig.WIDTH, ModelConfig.HEIGHT, 0);
+        SupportVector[] vectors = p.parse(altitudeMap, ModelConfig.WIDTH, ModelConfig.HEIGHT, 2);
         KernelTrainer t = new KernelTrainer();
         try {
             t.run(vectors, outputModelName, boundsModelName);
