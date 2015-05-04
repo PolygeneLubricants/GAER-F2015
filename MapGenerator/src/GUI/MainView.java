@@ -116,6 +116,23 @@ public class MainView {
             }
         });
 
+        //
+        Button isDiamondSquareButton = new Button("Isolated diamond square");
+        isDiamondSquareButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                short[][] randomMap = _randomMap.getMap();
+                for(int i = 0; i < randomMap.length; i = i + ModelConfig.HEIGHT) {
+                    for(int j = 0; j < randomMap[0].length; j = j + ModelConfig.WIDTH) {
+                        randomMap = RandomMap.CreateNewDiamondSquareVector(randomMap, i, j, ModelConfig.HEIGHT, ModelConfig.WIDTH, _trainer.GetAltitudeBoundPair());
+                    }
+                }
+
+                setRandomMap(randomMap);
+                classify();
+            }
+        });
+
         // RUN
         Button runButton = new Button("Run");
         runButton.addActionListener(new ActionListener() {
@@ -149,6 +166,7 @@ public class MainView {
         controlPanel.add(predictButton);
         controlPanel.add(stepButton);
         controlPanel.add(diamondSquareButton);
+        controlPanel.add(isDiamondSquareButton);
         controlPanel.add(runButton);
     }
 
